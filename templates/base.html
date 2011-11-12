@@ -1,0 +1,25 @@
+{% load i18n %}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<link rel="stylesheet" href="/media/css/style.css" />
+	<link rel="stylesheet" href="/media/css/custom-theme/jquery-ui-1.8.16.custom.css" />
+	<title>{% block title %}FUGR Reader{% endblock %}</title>
+	<script type='text/javascript' src='/media/js/jquery-1.6.2.min.js'></script>
+	<script type='text/javascript' src='/media/js/jquery-ui-1.8.16.custom.min.js'></script>
+	<script type='text/javascript' src='/media/js/fugr.js'></script>
+</head>
+
+<body>
+	<div id="header"></div>
+
+	<div id="content">
+		{% block content %}{% endblock %}
+	</div>
+
+	<div id="footer">
+		{% block footer %}{% endblock %}
+	</div>
+</body>
+
+</html>

@@ -8,8 +8,9 @@ import settings
 
 urlpatterns = patterns('',
 	# (r'^$', direct_to_template, { 'template': 'index.html' }, 'index'),
-	(r'^accounts/', include('registration.backends.default.urls')),
-	(r'^', include("django_fugr.urls")),
+	url(r'^accounts/', include('registration.backends.default.urls')),
+	url(r'^$', 'django_fugr.views.index', name='index'),
+	url(r'^fugr/', include("django_fugr.urls")),
 
 	# Examples:
 	# url(r'^$', 'fugr.views.home', name='home'),

@@ -155,5 +155,8 @@ LOGGING = {
 ACCOUNT_ACTIVATION_DAYS=7
 LOGIN_REDIRECT_URL = '/'
 
+# directory where user data is stored
+USER_DATA_DIR = os.path.join(PROJECT_ROOT, "userdata")
+
 if os.path.isfile(os.path.join(PROJECT_ROOT, "settings_local.py")):
 	from settings_local import *

@@ -1,7 +1,7 @@
 $(function(){
 	// jquery-ui styles
 	$('.tabs').tabs();
-	$('button').button();
+	$('button,input[type=submit]').button();
 	
 	// upload an OPML file
 	$('button#upload-opml').click(function(e){

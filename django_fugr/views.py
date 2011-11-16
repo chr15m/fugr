@@ -46,8 +46,6 @@ def opml_upload(request):
 			uf.tags = tags
 			uf.save()
 			print 'UserFeed:', feed
-	#from pprint import pformat
-	#return HttpResponse(pformat(opmldata), mimetype="text/plain")
 	return HttpResponseRedirect(reverse("index"))
 
 ############### JSON API ###############

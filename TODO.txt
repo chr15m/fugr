@@ -1,3 +1,15 @@
  * Progress bar for OPML upload
  * Add-feed-by-url interface
+ * Logo in the top right - hovering shows the about bar
+   * About link in the about bar (dialog popup)
+   * Source code link in the about bar
+   * Feature request link in the about bar
+ * Actually fetch some feeds
+    import feedparser
+    d = feedparser.parse("http://feeds.delicious.com/v2/rss/twelvetone")
+    print d['feed']['title']
+    print d.feed.title
+    print d.feed.link
+    print d['items'][1].title
+ * Ability to change feed tags
 

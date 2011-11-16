@@ -2,10 +2,9 @@
 {% load i18n %}
 
 {% block content %}
-
+<div class='auth'>
 <p>{% trans "Account successfully activated" %}</p>
 
 <p><a href="{% url auth_login %}">{% trans "Log in" %}</a></p>
-
-
+</div>
 {% endblock %}

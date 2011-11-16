@@ -2,10 +2,12 @@
 {% load i18n %}
 
 {% block content %}
+<div class='auth'>
 <form method="post" action=".">
   {% csrf_token %}
   {{ form.as_p }}
 
   <input type="submit" value="{% trans 'Submit' %}" />
 </form>
+</div>
 {% endblock %}

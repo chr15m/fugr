@@ -61,5 +61,5 @@ def json_api(fn):
 @json_api
 def feeds(request):
 	""" Returns the data object representing this user's feeds. """
-	return UserFeed.objects.filter(user=request.user)
+	return dict([(uf.feed.feed_url, {"blog_url": uf.feed.blog_url, "title": uf.feed.title, "tags": [t.tag for t in uf.tags.all()]}) for uf in UserFeed.objects.filter(user=request.user)])
 

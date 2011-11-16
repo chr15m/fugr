@@ -1,15 +1,20 @@
+from json import dumps
+
 from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 
 from parse_opml import parse_opml
+from json_encode import json_encode
 
 from models import Feed, FeedTag, UserFeed
 
 @login_required
 def index(request):
-	return direct_to_template(request, "index.html", {})
+	return direct_to_template(request, "index.html", {"feeds": feeds(request)})
+
+############### OPML UPLOAD ###############
 
 @login_required
 def opml_upload(request):
@@ -44,4 +49,17 @@ def opml_upload(request):
 	#from pprint import pformat
 	#return HttpResponse(pformat(opmldata), mimetype="text/plain")
 	return HttpResponseRedirect(reverse("index"))
+
+############### JSON API ###############
+
+def json_api(fn):
+	def newfunc(request, *args, **kwargs):
+		return HttpResponse(json_encode(fn(request, *args, **kwargs)), mimetype="text/plain")
+	return newfunc
+
+@login_required
+@json_api
+def feeds(request):
+	""" Returns the data object representing this user's feeds. """
+	return UserFeed.objects.filter(user=request.user)
 

@@ -1,1 +1,3 @@
- * Progress bar for OPML import
+ * Progress bar for OPML upload
+ * Add-feed-by-url interface
+

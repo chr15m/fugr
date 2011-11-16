@@ -13,3 +13,30 @@
     print d['items'][1].title
  * Ability to change feed tags
 
+ * Donate button in comments page.
+
+ * Clone Reader usability
+   * 'All items' is default view
+   * reload button on every page
+   * drop-down: show all/show new - sort by newest/oldest/magic - search - mark all as read
+   * Every tag/feed has a total unread count next to it
+   * Clicking a tag instantly shows you its feeds
+     * top entry is the feed itself with the aggregated view
+     * back button at top left says 'back'
+     * entries indented slightly (except top one)
+   * tags have a folder icon next to them
+   * feeds have an rss icon next to them
+   * when you click a feed - loading spinner (so that's ok) - feed features:
+     * back button at the top says 'feeds'
+     * top: collapse/expand (expand loads basically instantly - but not images - keep HTML but do not insert it yet)
+     * top: next item button
+     * top: star
+     * bottom: star
+     * bottom: share/email/share with note
+     * bottom: keep unread
+     * bottom: edit tags
+     * bottom: mark interesting
+
+ * Friend searching by email/username/name
+ * Commenting
+

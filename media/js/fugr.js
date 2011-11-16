@@ -8,6 +8,7 @@ $(function(){
 	// jquery-ui styles
 	$('.tabs').tabs();
 	$('button,input[type=submit]').button();
+	$('input').addClass('ui-widget');
 	
 	// upload an OPML file
 	$('button#upload-opml').click(function(e){
@@ -24,6 +25,12 @@ $(function(){
 	function populate_read_tab_with_tags(tags) {
 		// empty the area
 		$("div#tab-read").html("");
+		// default 'tag' links
+		$("div#tab-read").append($("<div class='feedtag'>All Items</div>"));
+		$("div#tab-read").append($("<div class='feedtag'>Read Items</div>"));
+		$("div#tab-read").append($("<div class='feedtag'>Starred Items</div>"));
+		$("div#tab-read").append($("<div class='feedtag'>People You Follow</div>"));
+		//$("div#tab-read").append($("<div class='feedtag'>Recommended Items</div>"));
 		// now put the tags in there
 		for (var tag in tags) {
 			var tagdiv = $("<div class='feedtag'>" + tag + "</div>");

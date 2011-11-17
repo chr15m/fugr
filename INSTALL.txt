@@ -1,0 +1,35 @@
+Install Django 1.3
+
+Dependencies
+------------
+
+jFeed:
+	cd media/js && git clone https://github.com/jfhovinne/jFeed.git
+
+Apache config
+-------------
+
+Comes with a wsgi script you can use for running it however you like ("site.wsgi").
+
+Here is how to use it with apache and mod_wsgi (eplace the stuff below in caps):
+
+<VirtualHost *:80>
+	ServerAdmin YOUR@EMAIL.COM
+	
+	DocumentRoot /var/www/PATH/TO/fugr
+	
+	ErrorLog /var/log/apache2/YOUR-DOMANIN.COM.error.log
+	CustomLog /var/log/apache2/YOUR-DOMAIN.COM.access.log combined
+	
+	ServerName YOUR-DOMAIN.COM
+	
+	SuexecUserGroup www-data www-data
+	
+	Alias /media /var/www/PATH/TO/fugr/media
+	Alias /static /var/www/PATH/TO/fugr/static
+	
+	WSGIDaemonProcess billing user=www-data group=www-data
+	WSGIProcessGroup billing
+	WSGIScriptAlias / /var/www/PATH/TO/fugr/site.wsgi
+</VirtualHost>
+

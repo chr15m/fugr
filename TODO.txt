@@ -1,5 +1,7 @@
  * Progress bar for OPML upload
- * Add-feed-by-url interface
+ * font - Maven Pro? Ubuntu? or http://practicefoundry.com/collator.html?
+ * Add-feed-by-url interface working
+ * Feedback tab
  * Logo in the top right - hovering shows the about bar
    * About link in the about bar (dialog popup)
    * Source code link in the about bar
@@ -17,6 +19,7 @@
 
  * Clone Reader usability
    * 'All items' is default view
+   * history management (back button should work)
    * reload button on every page
    * drop-down: show all/show new - sort by newest/oldest/magic - search - mark all as read
    * Every tag/feed has a total unread count next to it
@@ -39,4 +42,7 @@
 
  * Friend searching by email/username/name
  * Commenting
+
+ * "Downloadable" version made with xulrunner
+   * Android app?
 

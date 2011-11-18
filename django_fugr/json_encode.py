@@ -3,6 +3,8 @@
 
 from decimal import Decimal
 
+from datetime import datetime, date, time
+
 from django.core.serializers.python import Serializer as PythonSerializer
 from django.db.models.query import QuerySet
 from django.core.serializers.json import DateTimeAwareJSONEncoder
@@ -43,21 +45,13 @@ def json_encode(data):
 		# the type "list". Oh man, that was a dumb mistake!
 		if isinstance(data, list):
 			ret = _list(data)
-		# Same as for lists above.
-		elif appengine and isinstance(data, appengine.ext.db.Query):
-			ret = _list(data)
 		elif isinstance(data, dict):
 			ret = _dict(data)
 		elif isinstance(data, Decimal):
 			# json.dumps() cant handle Decimal
 			ret = str(data)
-		elif isinstance(data, (QuerySet, RelationIndexQuery)):
-			# Actually its the same as a list ...
-			ret = _list(data)
 		elif isinstance(data, Model):
 			ret = _model(data)
-		elif appengine and isinstance(data, appengine.ext.db.Model):
-			ret = _googleModel(data)
 		# here we need to encode the string as unicode (otherwise we get utf-16 in the json-response)
 		elif isinstance(data, basestring):
 			ret = unicode(data)
@@ -72,6 +66,12 @@ def json_encode(data):
 			ret = str(data)
 		elif isinstance(data, time):
 			ret = "T" + str(data)
+		elif isinstance(data, (QuerySet, RelationIndexQuery)):
+			ret = _list(data)
+		elif appengine and isinstance(data, appengine.ext.db.Query):
+			ret = _list(data)
+		elif appengine and isinstance(data, appengine.ext.db.Model):
+			ret = _googleModel(data)
 		else:
 			# always fallback to a string!
 			ret = data

@@ -6,7 +6,20 @@ $(function(){
 	};
 	
 	// this header will hang out at the top of the read area
-	var headerhtml = $("<div class='read-header ui-state-default'><button id='read-back' class='ui-widget ui-button'><span class='ui-icon ui-icon-circle-arrow-w'></span></button><button id='read-refresh' class='ui-widget ui-button'><span class='ui-icon ui-icon-arrowrefresh-1-e'></span></button></div>");
+	function set_header(title, backbutton) {
+		var headerhtml = $("<div class='read-header ui-state-default'></div>");
+		// if they didn't set backbutton to false
+		if (typeof(backbutton) == "undefined" || backbutton == true) {
+			headerhtml.append("<button id='read-back' class='ui-widget ui-button'><span class='ui-icon ui-icon-circle-arrow-w'></span></button>");
+		}
+		// add the title they requested
+		if (typeof(title) != "undefined") {
+			headerhtml.append("<span class='title'>" + title + "</span>");
+		}
+		// refresh button
+		headerhtml.append("<button id='read-refresh' class='ui-widget ui-button'><span class='ui-icon ui-icon-arrowrefresh-1-e'></span></button>");
+		$('div#tab-read').html(headerhtml);
+	}
 	
 	// jquery-ui styles
 	$('.tabs').tabs();
@@ -25,24 +38,25 @@ $(function(){
 	});
 	
 	// loads a particular feed into the read area
-	function load_feed(feed_url) {
+	function load_feed(feed) {
+		set_header(feed.title);
+		// TODO: loading spinner
 		$.getFeed({
-			url: "/fugr/xml/feed/" + escape(feed_url),
-			success: function(feed) {
-				$('div#tab-read').html(headerhtml);
+			url: "/fugr/xml/feed/" + escape(feed.feed_url),
+			success: function(feed_xml) {
 				$('div#tab-read').append('<h2>'
 				+ '<a href="'
-				+ feed.link
+				+ feed_xml.link
 				+ '">'
-				+ feed.title
+				+ feed_xml.title
 				+ '</a>'
 				+ '</h2>');
 				
 				var html = '';
 				
-				for(var i = 0; i < feed.items.length && i < 5; i++) {
+				for(var i = 0; i < feed_xml.items.length && i < 5; i++) {
 				
-					var item = feed.items[i];
+					var item = feed_xml.items[i];
 					
 					html += '<h3>'
 					+ '<a href="'
@@ -70,21 +84,20 @@ $(function(){
 	// populates the read tab with this tag's feeds
 	function populate_read_tab_with_feeds(tagname) {
 		// empty the area
-		$("div#tab-read").html(headerhtml);
+		set_header(tagname);
 		// add the link to summary feeds
 		$("div#tab-read").append("<div class='feed-link' id='feed-link-all'>All " + tagname + "</div>");
 		var tagfeeds = session.tags[tagname];
 		// now put the feeds in there
 		for (var f=0; f<tagfeeds.length; f++) {
-			var feed_url = tagfeeds[f].feed_url;
 			// function factory to load the feed
-			function make_load_func(feed_url) {
+			function make_load_func(feed) {
 				return function(e) {
-					load_feed(feed_url);
+					load_feed(feed);
 				}
 			}
 			$("div#tab-read").append(
-				$("<div class='feed-link'>" + tagfeeds[f].title + "</div>").click(make_load_func(feed_url))
+				$("<div class='feed-link'>" + tagfeeds[f].title + "</div>").click(make_load_func(tagfeeds[f]))
 			);
 		}
 		// add the folder icons
@@ -97,7 +110,7 @@ $(function(){
 	// populates the read tab with this user's tags
 	function populate_read_tab_with_tags(tags) {
 		// empty the area
-		$("div#tab-read").html(headerhtml);
+		set_header("", false);
 		// default 'tag' links
 		$("div#tab-read").append($("<div class='feedtag-link'>All Items</div>"));
 		$("div#tab-read").append($("<div class='feedtag-link'>Read Items</div>"));

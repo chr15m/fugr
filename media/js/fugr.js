@@ -26,10 +26,45 @@ $(function(){
 	
 	// loads a particular feed into the read area
 	function load_feed(feed_url) {
-		console.log(feed_url);
-		$.get("/fugr/xml/feed/" + escape(feed_url), function(result) {
-			console.log(result);
-		}, "xml");
+		$.getFeed({
+			url: "/fugr/xml/feed/" + escape(feed_url),
+			success: function(feed) {
+				$('div#tab-read').html(headerhtml);
+				$('div#tab-read').append('<h2>'
+				+ '<a href="'
+				+ feed.link
+				+ '">'
+				+ feed.title
+				+ '</a>'
+				+ '</h2>');
+				
+				var html = '';
+				
+				for(var i = 0; i < feed.items.length && i < 5; i++) {
+				
+					var item = feed.items[i];
+					
+					html += '<h3>'
+					+ '<a href="'
+					+ item.link
+					+ '">'
+					+ item.title
+					+ '</a>'
+					+ '</h3>';
+					
+					html += '<div class="updated">'
+					+ item.updated
+					+ '</div>';
+					
+					html += '<div>'
+					+ item.description
+					+ '</div>';
+				}
+				
+				$('div#tab-read').append(html);
+			}	
+		});
+
 	}
 	
 	// populates the read tab with this tag's feeds

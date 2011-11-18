@@ -55,7 +55,6 @@ def opml_upload(request):
 @login_required
 def feed(request, feed_url):
 	""" Returns the actual XML of a particular feed. """
-	print feed_url
 	# security - make sure this feed is one the user owns
 	feed = get_object_or_404(UserFeed, user=request.user, feed__feed_url=feed_url)
 	response = urllib2.urlopen(feed_url)

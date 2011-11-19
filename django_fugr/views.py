@@ -1,5 +1,7 @@
 from json import dumps
 import urllib2
+import hashlib
+
 import feedparser
 
 from django.contrib.auth.decorators import login_required
@@ -7,6 +9,7 @@ from django.views.generic.simple import direct_to_template
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
+from django.core.cache import cache
 
 from parse_opml import parse_opml
 from json_encode import json_encode
@@ -68,15 +71,12 @@ def feeds(request):
 @json_api
 def feed(request, feed_url):
 	""" Returns the contents of a feed. """
-	print feed_url
-	# security - make sure this feed is one the user owns
-	feed = get_object_or_404(UserFeed, user=request.user, feed__feed_url=feed_url)
-	#response = urllib2.urlopen(feed_url)
-	#return HttpResponse(response)
-	parsed = feedparser.parse(feed_url)
-	#print d['feed']['title']
-	#print d.feed.title
-	#print d.feed.link
-	#print d['items'][1].title
+	cache_key = "feed-" + hashlib.sha1(feed_url).hexdigest()
+	parsed = cache.get(cache_key)
+	if not parsed:
+		# make sure this feed is one in our database, not some arbitrary url
+		feed = get_object_or_404(UserFeed, user=request.user, feed__feed_url=feed_url)
+		parsed = feedparser.parse(feed_url)
+		cache.set(cache_key, parsed)
 	return parsed
 

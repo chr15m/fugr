@@ -158,5 +158,17 @@ LOGIN_REDIRECT_URL = '/'
 # directory where user data is stored
 USER_DATA_DIR = os.path.join(PROJECT_ROOT, "userdata")
 
+# cached data
+CACHES = {
+	'default': {
+		'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+		'LOCATION': os.path.join(PROJECT_ROOT, 'cache'),
+		'OPTIONS': {
+			'MAX_ENTRIES': 300,
+			'KEY_PREFIX': 'fugr',
+		}
+	}
+}
+
 if os.path.isfile(os.path.join(PROJECT_ROOT, "settings_local.py")):
 	from settings_local import *

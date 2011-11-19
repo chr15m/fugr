@@ -1,5 +1,6 @@
 from json import dumps
 import urllib2
+import feedparser
 
 from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
@@ -50,16 +51,6 @@ def opml_upload(request):
 			print 'UserFeed:', feed
 	return HttpResponseRedirect(reverse("index"))
 
-############### FEED FETCHER ###############
-
-@login_required
-def feed(request, feed_url):
-	""" Returns the actual XML of a particular feed. """
-	# security - make sure this feed is one the user owns
-	feed = get_object_or_404(UserFeed, user=request.user, feed__feed_url=feed_url)
-	response = urllib2.urlopen(feed_url)
-	return HttpResponse(response)
-
 ############### JSON API ###############
 
 def json_api(fn):
@@ -72,4 +63,20 @@ def json_api(fn):
 def feeds(request):
 	""" Returns the data object representing this user's feeds. """
 	return dict([(uf.feed.feed_url, {"pk": uf.feed.pk, "blog_url": uf.feed.blog_url, "title": uf.feed.title, "tags": [t.tag for t in uf.tags.all()]}) for uf in UserFeed.objects.filter(user=request.user)])
+
+@login_required
+@json_api
+def feed(request, feed_url):
+	""" Returns the contents of a feed. """
+	print feed_url
+	# security - make sure this feed is one the user owns
+	feed = get_object_or_404(UserFeed, user=request.user, feed__feed_url=feed_url)
+	#response = urllib2.urlopen(feed_url)
+	#return HttpResponse(response)
+	parsed = feedparser.parse(feed_url)
+	#print d['feed']['title']
+	#print d.feed.title
+	#print d.feed.link
+	#print d['items'][1].title
+	return parsed
 

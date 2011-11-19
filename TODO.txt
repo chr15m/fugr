@@ -1,5 +1,6 @@
  * Progress bar for OPML upload
  * font - Maven Pro? Ubuntu? or http://practicefoundry.com/collator.html?
+ * Fix json encoding of struct_time
  * Add-feed-by-url interface working
  * Feedback tab
  * Logo in the top right - hovering shows the about bar

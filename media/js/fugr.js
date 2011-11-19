@@ -2,7 +2,8 @@ $(function(){
 	// global object holding all data about the current user's session
 	var session = {
 		"tags": {},
-		"feeds": {}
+		"feeds": {},
+		"current_feed": null,
 	};
 	
 	// this header will hang out at the top of the read area
@@ -19,6 +20,11 @@ $(function(){
 		// refresh button
 		headerhtml.append("<button id='read-refresh' class='ui-widget ui-button'><span class='ui-icon ui-icon-arrowrefresh-1-e'></span></button>");
 		$('div#tab-read').html(headerhtml);
+	}
+	
+	// puts the loading spinner in the header area
+	function show_spinner() {
+		$("div#tab-read").html("<img src='/media/img/loader.gif' id='loader'/>");
 	}
 	
 	// jquery-ui styles
@@ -39,45 +45,49 @@ $(function(){
 	
 	// loads a particular feed into the read area
 	function load_feed(feed) {
-		set_header(feed.title);
-		// TODO: loading spinner
-		$.getFeed({
-			url: "/fugr/xml/feed/" + escape(feed.feed_url),
-			success: function(feed_xml) {
+		// show spinner while we load
+		show_spinner();
+		$.get("/fugr/json/feed/" + escape(feed.feed_url),
+			function(feed_json) {
+				set_header(feed_json.feed.title);
+				session.current_feed = feed_json;
 				$('div#tab-read').append('<h2>'
 				+ '<a href="'
-				+ feed_xml.link
+				+ feed_json.feed.link
 				+ '">'
-				+ feed_xml.title
+				+ feed_json.feed.title
 				+ '</a>'
-				+ '</h2>');
+				+ '</h2>'
+				+ "<p>"
+				+ feed_json.feed.subtitle
+				+"</p>");
 				
 				var html = '';
 				
-				for(var i = 0; i < feed_xml.items.length && i < 5; i++) {
-				
-					var item = feed_xml.items[i];
+				for(var i = 0; i < feed_json.entries.length && i < 5; i++) {
+					var entry = feed_json.entries[i];
 					
 					html += '<h3>'
 					+ '<a href="'
-					+ item.link
+					+ entry.link
 					+ '">'
-					+ item.title
+					+ entry.title
 					+ '</a>'
 					+ '</h3>';
 					
 					html += '<div class="updated">'
-					+ item.updated
+					+ entry.updated
 					+ '</div>';
 					
 					html += '<div>'
-					+ item.description
+					+ entry.content[0].value
 					+ '</div>';
 				}
 				
 				$('div#tab-read').append(html);
-			}	
-		});
+			},
+			"json"
+		);
 
 	}
 	

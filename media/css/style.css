@@ -23,14 +23,15 @@ img#loader {
 	margin-bottom: .5em;
 }
 
-div.feedtag-link, div.feed-link {
+div.feedlist {
 	width: 100%;
 	padding-top: 0.4em;
 	padding-bottom: 0.4em;
 	cursor: pointer;
+	color: #444444 !important;
 }
 
-div.feedtag-link span.ui-icon, div.feed-link span.ui-icon {
+div.feedlist span.ui-icon {
 	display: inline-block;
 	margin-right: 0.4em;
 	margin-left: 0.4em;
@@ -38,4 +39,25 @@ div.feedtag-link span.ui-icon, div.feed-link span.ui-icon {
 
 div#tab-read {
 	padding: 0em;
+}
+
+div#tab-read div.read-header {
+	height: 1.5em;
+}
+
+div#tab-read div.read-header span.title {
+	display: inline-block;
+	width: 100%;
+	text-align: center;
+}
+
+div#tab-read div.read-header button#read-back {
+	position: relative;
+	top: -1em;
+}
+
+div#tab-read div.read-header button#read-refresh {
+	float: right;
+	position: relative;
+	top: -1em;
 }

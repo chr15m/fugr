@@ -4,7 +4,7 @@
 from decimal import Decimal
 
 from datetime import datetime, date, time
-from time import struct_time
+from time import struct_time, mktime
 
 from django.core.serializers.python import Serializer as PythonSerializer
 from django.db.models.query import QuerySet
@@ -65,8 +65,10 @@ def json_encode(data):
 			ret = str(data).replace(' ', 'T')
 		elif isinstance(data, date):
 			ret = str(data)
-		elif isinstance(data, (time, struct_time)):
+		elif isinstance(data, time):
 			ret = "T" + str(data)
+		elif isinstance(data, struct_time):
+			ret = str(datetime(*data[:6])).replace(" ", "T")
 		elif isinstance(data, (QuerySet, RelationIndexQuery)):
 			ret = _list(data)
 		elif appengine and isinstance(data, appengine.ext.db.Query):

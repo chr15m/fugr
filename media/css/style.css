@@ -42,22 +42,24 @@ div#tab-read {
 }
 
 div#tab-read div.read-header {
-	height: 1.5em;
+	height: 1.6em;
 }
 
 div#tab-read div.read-header span.title {
 	display: inline-block;
 	width: 100%;
 	text-align: center;
+	padding-top: 0.2em;
 }
 
 div#tab-read div.read-header button#read-back {
 	position: relative;
-	top: -1em;
+	top: -1.2em;
+	margin-left: 0.1em;
 }
 
 div#tab-read div.read-header button#read-refresh {
 	float: right;
 	position: relative;
-	top: -1em;
+	top: -1.2em;
 }

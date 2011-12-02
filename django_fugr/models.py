@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import base64
 
 from django.contrib.auth.models import User
@@ -53,6 +53,10 @@ class Feed(models.Model):
 	
 	def get_cached_feed(self):
 		""" Unpickles and returns the cached version of the feedparser object. """
+		# check if we have a recent copy of this feed
+		if self.feed_parsed is None or self.last_update < datetime.now() - timedelta(days=1):
+			# for whatever reason we don't have a recent copy of this feed
+			self.update_feed()
 		return pickle.loads(base64.decodestring(self.feed_parsed))
 	
 	def __unicode__(self):

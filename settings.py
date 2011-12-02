@@ -161,6 +161,9 @@ LOGIN_REDIRECT_URL = '/'
 # directory where user data is stored
 USER_DATA_DIR = os.path.join(PROJECT_ROOT, "userdata")
 
+# how many processes to run at the same time when fetching feeds
+FEED_FETCHER_POOL_SIZE = 10
+
 # cached data
 CACHES = {
 	'default': {

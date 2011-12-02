@@ -1,9 +1,10 @@
 from datetime import datetime
-from json_encode import json_encode
 import base64
 
 from django.contrib.auth.models import User
 from django.db import models
+
+import cPickle as pickle
 
 import feedparser
 
@@ -19,7 +20,7 @@ class Feed(models.Model):
 	title = models.CharField(max_length=1024)
 	feed_url = models.CharField(max_length=1024)
 	blog_url = models.CharField(max_length=1024)
-	feed_parsed_json = models.TextField(null=True)
+	feed_parsed = models.TextField(null=True)
 	feed_etag = models.CharField(max_length=256, null=True, blank=True)
 	feed_last_modified = models.DateTimeField(null=True, blank=True)
 	last_update = models.DateTimeField(null=True)
@@ -32,20 +33,27 @@ class Feed(models.Model):
 				# nothing has changed since our last update
 				print self.feed_url, "Feed not modified"
 			else:
+				# TODO: handle other statuses like redirect?
 				# store the etag and modified fields to not re-request unchanged feeds next time
 				self.feed_etag = getattr(parsed, "etag", None)
 				modified = getattr(parsed, "modified", None)
 				self.feed_last_modified = modified and datetime(*modified[:6]) or None
 				# if the bozo flag is set, turn the resulting exception into a string so we can encode it
 				if parsed.bozo:
+					# this object does not always serialize nicely
 					parsed.bozo_exception = str(parsed.bozo_exception)
-				# store the json encoded version of the parsed feed we fetched in a b64 blob
-				self.feed_parsed_json = base64.encodestring(json_encode(parsed))
-				print self.feed_url, "Stored", len(self.feed_parsed_json), "bytes"
+				# store the pickle of the parsed feed we fetched in a b64 blob
+				# TODO: also store pickle.DEFAULT_PROTOCOL and other serializing format info
+				self.feed_parsed = base64.encodestring(pickle.dumps(parsed))
+				print self.feed_url, "Stored", len(self.feed_parsed), "bytes"
 		else:
 			print self.feed_url, "Feed did not return a valid status"
 		self.last_update = datetime.now()
 		self.save()
+	
+	def get_cached_feed(self):
+		""" Unpickles and returns the cached version of the feedparser object. """
+		return pickle.loads(base64.decodestring(self.feed_parsed))
 	
 	def __unicode__(self):
 		return unicode(self.title)

@@ -79,5 +79,5 @@ def feed(request, feed_url):
 		pass
 	else:
 		# TODO: hmm, shouldn't bother un-encoding and re-encoding this json object like this - probably expensive
-		return loads(base64.decodestring(get_object_or_404(UserFeed, user=request.user, feed__feed_url=feed_url).feed_parsed_json))
+		return get_object_or_404(UserFeed, user=request.user, feed__feed_url=feed_url).get_cached_feed()
 

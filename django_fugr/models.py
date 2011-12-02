@@ -67,9 +67,16 @@ class UserFeed(models.Model):
 	def __unicode__(self):
 		return unicode(self.user) + " - " + unicode(self.feed) + " " + str(self.tags.all())
 
-class EntryInterest(models.Model):
-	""" Stores the interest value of a particular item within a feed for a particular user. """
-	uid = models.CharField(max_length=1024)
-	userfeed = models.ForeignKey(UserFeed)
-	interest = models.IntegerField()
+class Entry(models.Model):
+	parsed = models.TextField(null=True)
+	uid = models.CharField(max_length=256)
+
+class UserEntry(models.Model):
+	""" Relationship a user has to a particular entry in a feed. """
+	entry = models.ForeignKey(Entry)
+	user = models.ForeignKey(User)
+	read = models.BooleanField(default=False)
+	like = models.BooleanField(default=False)
+	star = models.BooleanField(default=False)
+	interest = models.FloatField(default=0)
 

@@ -9,12 +9,20 @@ import settings
 
 def do_update(f):
 	print 'Fetching "%s" <%s>' % (f.title, f.blog_url)
-	f.update_feed()
+	try:
+		f.update_feed()
+	except KeyboardInterrupt, e:
+		return
 
 class Command(NoArgsCommand):
 	help = 'Cron job for fugr - updates feed cache and interest rankings.'
 	def handle_noargs(self, *args, **kwargs):
 		# launches a pool of processes to do the actual fetching of each feed
 		fetchers = Pool(settings.FEED_FETCHER_POOL_SIZE)
-		fetchers.map(do_update, Feed.objects.all())
+		try:
+			fetchers.map_async(do_update, Feed.objects.all()).get(0xFFFF)
+		except KeyboardInterrupt:
+			# bail!
+			fetchers.terminate()
+			exit()
 

@@ -6,6 +6,7 @@ $(function(){
 		"tags": {},
 		"feeds": {},
 		"current_feed": null,
+		"username": username,
 	};
 	
 	// this header will hang out at the top of the read area
@@ -81,17 +82,18 @@ $(function(){
 	function populate_read_tab_with_feeds(tagname, backfunc) {
 		// empty the area
 		set_header(tagname, backfunc);
+		// function factory to load the feed
+		function make_load_func(feed) {
+			return function(e) {
+				load_feed(feed, function() { populate_read_tab_with_feeds(tagname, backfunc); });
+			}
+		}
 		// add the link to summary feeds
-		$("div#tab-read").append("<div class='feed-link feedlist' id='feed-link-all'>All " + tagname + "</div>");
+		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>All " + tagname + "</div>").click(make_load_func("/feeds/" + session.username + "/" + tagname)));
+		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>Interesting " + tagname + "</div>").click(make_load_func("/feeds/" + session.username + "/interesting/" + tagname)));
 		var tagfeeds = session.tags[tagname];
 		// now put the feeds in there
 		for (var f=0; f<tagfeeds.length; f++) {
-			// function factory to load the feed
-			function make_load_func(feed) {
-				return function(e) {
-					load_feed(feed, function() { populate_read_tab_with_feeds(tagname, backfunc); });
-				}
-			}
 			$("div#tab-read").append(
 				$("<div class='feed-link feedlist'>" + tagfeeds[f].title + "</div>").click(make_load_func(tagfeeds[f]))
 			);
@@ -110,6 +112,7 @@ $(function(){
 		// default 'tag' links
 		$("div#tab-read").append($("<div class='feedtag-link feedlist'>All Items</div>"));
 		$("div#tab-read").append($("<div class='feedtag-link feedlist'>Read Items</div>"));
+		$("div#tab-read").append($("<div class='feedtag-link feedlist'>Liked Items</div>"));
 		$("div#tab-read").append($("<div class='feedtag-link feedlist'>Starred Items</div>"));
 		//$("div#tab-read").append($("<div class='feedtag-link feedlist'>People You Follow</div>"));
 		//$("div#tab-read").append($("<div class='feedtag'>Recommended Items</div>"));

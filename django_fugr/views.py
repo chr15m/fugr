@@ -1,8 +1,7 @@
 from json import dumps
 import urllib2
 import hashlib
-
-import feedparser
+import base64
 
 from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
@@ -18,7 +17,7 @@ from models import Feed, FeedTag, UserFeed
 
 @login_required
 def index(request):
-	return direct_to_template(request, "index.html", {"feeds": feeds(request)})
+	return direct_to_template(request, "index.html", {"username": json_encode(request.user)})
 
 ############### OPML UPLOAD ###############
 
@@ -54,6 +53,10 @@ def opml_upload(request):
 			print 'UserFeed:', feed
 	return HttpResponseRedirect(reverse("index"))
 
+############### Feeds we publish ###############
+
+
+
 ############### JSON API ###############
 
 def json_api(fn):
@@ -71,12 +74,10 @@ def feeds(request):
 @json_api
 def feed(request, feed_url):
 	""" Returns the contents of a feed. """
-	cache_key = "feed-" + hashlib.sha1(feed_url).hexdigest()
-	parsed = cache.get(cache_key)
-	if not parsed:
-		# make sure this feed is one in our database, not some arbitrary url
-		feed = get_object_or_404(UserFeed, user=request.user, feed__feed_url=feed_url)
-		parsed = feedparser.parse(feed_url)
-		cache.set(cache_key, parsed)
-	return parsed
+	# is this a special internal constructed feed (e.g. aggregation or 'interesting')
+	if feed_url.startswith("/feed"):
+		pass
+	else:
+		# TODO: hmm, shouldn't bother un-encoding and re-encoding this json object like this - probably expensive
+		return loads(base64.decodestring(get_object_or_404(UserFeed, user=request.user, feed__feed_url=feed_url).feed_parsed_json))
 

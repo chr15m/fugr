@@ -32,6 +32,8 @@ except ImportError:
 				class Query:
 					pass
 
+from xml.sax import SAXParseException
+
 def json_encode(data):
 	"""
 	The main issues with django's default json serializer is that properties that
@@ -71,6 +73,8 @@ def json_encode(data):
 			ret = str(datetime(*data[:6])).replace(" ", "T")
 		elif isinstance(data, (QuerySet, RelationIndexQuery)):
 			ret = _list(data)
+		elif isinstance(data, SAXParseException):
+			ret = str(data)
 		elif appengine and isinstance(data, appengine.ext.db.Query):
 			ret = _list(data)
 		elif appengine and isinstance(data, appengine.ext.db.Model):

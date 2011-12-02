@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block scripts %}
+<script>
+	var username = "{{ user }}";
+</script>
+{% endblock %}
+
 {% block content %}
 	<!-- Main interface -->
 	<div id="main-tabs" class='tabs'>

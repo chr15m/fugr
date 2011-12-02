@@ -1,7 +1,7 @@
- * Progress bar for OPML upload
- * Feed caching
  * font - Maven Pro? Ubuntu? or http://practicefoundry.com/collator.html?
- * 
+
+ * force ff and webkit to execute all scripts on 'back': $(window).unload( function () {} );
+ * Progress bar for OPML upload
  * Fix json encoding of struct_time
  * Add-feed-by-url interface working
  * Feedback tab
@@ -52,4 +52,5 @@ Done
     print d.feed.title
     print d.feed.link
     print d['items'][1].title
+ + Feed caching
 

@@ -2,6 +2,7 @@ body {
 	font-family: Arial, sans-serif;
 	color: #444444;
 	font-size: 1.5em;
+	margin: 0px;
 }
 
 a {
@@ -33,18 +34,22 @@ img#loader {
 	margin-bottom: .5em;
 }
 
+div#main-tabs {
+	padding: 0px;
+}
+
 div.feedlist {
 	width: 100%;
-	padding-top: 0.4em;
-	padding-bottom: 0.4em;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
 	cursor: pointer;
 	color: #444444 !important;
 }
 
 div.feedlist span.ui-icon {
 	display: inline-block;
-	margin-right: 0.4em;
-	margin-left: 0.4em;
+	margin-right: 0.5em;
+	margin-left: 0.5em;
 }
 
 div#tab-read {

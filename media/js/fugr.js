@@ -54,7 +54,7 @@ $(function(){
 	function load_feed(feed, backfunc) {
 		// show spinner while we load
 		show_spinner();
-		$.get("/fugr/json/feed/" + escape(feed.feed_url),
+		$.get("/fugr/json/feed/" + escape(feed.url),
 			function(feed_json) {
 				session.current_feed = feed_json;
 				set_header("<a href='" + feed_json.feed.link + "'>" + feed_json.feed.title + "</a>", backfunc);
@@ -116,9 +116,14 @@ $(function(){
 		$("div#tab-read").append($("<div class='feedtag-link feedlist'>Starred Items</div>"));
 		//$("div#tab-read").append($("<div class='feedtag-link feedlist'>People You Follow</div>"));
 		//$("div#tab-read").append($("<div class='feedtag'>Recommended Items</div>"));
+		// add the Untagged list at the start
+		$("div#tab-read").append("<div class='feedtag-link feedlist'>Untagged</div>");
 		// now put the tags in there
 		for (var tag in tags) {
-			$("div#tab-read").append("<div class='feedtag-link feedlist'>" + tag + "</div>");
+			// skip the untagged list
+			if (tag != "Untagged") {
+				$("div#tab-read").append("<div class='feedtag-link feedlist'>" + tag + "</div>");
+			}
 		}
 		// add the folder icons
 		$("div.feedtag-link").addClass("ui-state-default");
@@ -129,21 +134,30 @@ $(function(){
 		});
 	}
 	
+	function add_feed_to_tag(feed_url, data, tagname) {
+		// add the feed url to this tuple
+		data[feed_url].url = feed_url;
+		// if we don't have this tag yet create it as an array
+		if (typeof(session.tags[tagname]) == "undefined") {
+			session.tags[tagname] = [];
+		}
+		// push this feed onto the tag it belongs to
+		session.tags[tagname].push(data[feed_url]);
+	}
+	
 	// load up our list of tags into the main pane
 	$.get("/fugr/json/feeds", function(data) {
 		session.feeds = data;
 		// build the inverse datastructure of what we got - a list of tags pointing to feeds
 		for (var feed_url in data) {
 			var tags = data[feed_url].tags;
-			for (var t=0; t<tags.length; t++) {
-				// add the feed url to this tuple
-				data[feed_url].feed_url = feed_url;
-				// if we don't have this tag yet create it as an array
-				if (typeof(session.tags[tags[t]]) == "undefined") {
-					session.tags[tags[t]] = [];
+			if (tags.length > 0) {
+				// this feed has some tags attached
+				for (var t=0; t<tags.length; t++) {
+					add_feed_to_tag(feed_url, data, tags[t]);
 				}
-				// push this feed onto the tag it belongs to
-				session.tags[tags[t]].push(data[feed_url]);
+			} else {
+				add_feed_to_tag(feed_url, data, "Untagged");
 			}
 		}
 		// populate the read area with the tags to begin with

@@ -23,6 +23,7 @@ def index(request):
 
 @login_required
 def opml_upload(request):
+	# TODO: provide feedback to the user - progress bar
 	uploaded = request.FILES.get('opml-upload')
 	if uploaded:
 		opmldata = parse_opml(uploaded.read())
@@ -43,7 +44,7 @@ def opml_upload(request):
 				tagobject.save()
 				print 'FeedTag:', tagobject
 			# get or create the feed
-			feed, created = Feed.objects.get_or_create(feed_url=feed_url, title=opmldata[feed_url]["title"], blog_url=opmldata[feed_url]["blog_url"])
+			feed, created = Feed.objects.get_or_create(url=feed_url, title=opmldata[feed_url]["title"], blog_url=opmldata[feed_url]["blog_url"])
 			feed.save()
 			print 'Feed:', feed
 			# now assign this feed with these tags to the current user
@@ -68,7 +69,10 @@ def json_api(fn):
 @json_api
 def feeds(request):
 	""" Returns the data object representing this user's feeds. """
-	return dict([(uf.feed.feed_url, {"pk": uf.feed.pk, "blog_url": uf.feed.blog_url, "title": uf.feed.title, "tags": [t.tag for t in uf.tags.all()]}) for uf in UserFeed.objects.filter(user=request.user)])
+	result = dict([(uf.feed.url, {"pk": uf.feed.pk, "blog_url": uf.feed.blog_url, "title": uf.feed.title, "tags": [t.tag for t in uf.tags.all()]}) for uf in UserFeed.objects.filter(user=request.user)])
+	from django.db import connection
+	print connection.queries
+	return result
 
 @login_required
 @json_api
@@ -79,5 +83,5 @@ def feed(request, feed_url):
 		pass
 	else:
 		# TODO: hmm, shouldn't bother un-encoding and re-encoding this json object like this - probably expensive
-		return get_object_or_404(UserFeed, user=request.user, feed__feed_url=feed_url).feed.get_cached_feed()
+		return get_object_or_404(UserFeed, user=request.user, feed__url=feed_url).feed.get_cached_feed()
 

@@ -4,6 +4,16 @@ body {
 	font-size: 2em;
 }
 
+a {
+	color: #0073Ea;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+a:hover {
+	color: #18ce12;
+}
+
 div.auth {
 	width: 400px;
 	margin-left: auto;
@@ -63,3 +73,4 @@ div#tab-read div.read-header button#read-refresh {
 	position: relative;
 	top: -1.2em;
 }
+

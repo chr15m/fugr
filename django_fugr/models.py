@@ -92,8 +92,8 @@ class UserEntry(models.Model):
 	""" Relationship a user has to a particular entry in a feed. """
 	entry = models.ForeignKey(Entry)
 	user = models.ForeignKey(User)
-	read = models.BooleanField(default=False)
-	like = models.BooleanField(default=False)
-	star = models.BooleanField(default=False)
+	read = models.DateTimeField(null=True, blank=True)
+	like = models.DateTimeField(null=True, blank=True)
+	star = models.DateTimeField(null=True, blank=True)
 	interest = models.FloatField(default=0)
 

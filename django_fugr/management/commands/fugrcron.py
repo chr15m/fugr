@@ -10,7 +10,7 @@ import settings
 def do_update(f):
 	print 'Fetching "%s" <%s>' % (f.title, f.blog_url)
 	try:
-		f.update_feed()
+		f.feeddata.update_feed()
 	except KeyboardInterrupt, e:
 		return
 

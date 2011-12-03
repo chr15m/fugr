@@ -34,8 +34,9 @@ class FeedData(models.Model):
 	last_update = models.DateTimeField(null=True)
 	feed = models.OneToOneField(Feed, null=True)
 	
-	def update_feed(self, url):
+	def update_feed(self):
 		""" Refreshes the cached version of the parsed feed from the remote URL. """
+		url = self.feed.url
 		parsed = feedparser.parse(url, etag=self.etag, modified=self.last_modified)
 		if hasattr(parsed, "status"):
 			if parsed.status == 304:
@@ -65,7 +66,7 @@ class FeedData(models.Model):
 		# check if we have a recent copy of this feed
 		if self.parsed is None or self.last_update < datetime.now() - timedelta(days=1) and self.feed:
 			# for whatever reason we don't have a recent copy of this feed
-			self.update_feed(self.feed.url)
+			self.update_feed()
 		return pickle.loads(base64.decodestring(self.parsed))
 
 # When a Feed is created, also create the FeedData object that belongs to it

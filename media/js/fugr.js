@@ -1,4 +1,9 @@
 $(function(){
+	// on mobile devices do this:
+	if ((/android|ipad|iphone/gi).test(navigator.appVersion)) {
+		$("body").css({"font-size": ".9em"});
+	}
+	
 	var MAX_AT_ONCE = 10;
 	
 	// global object holding all data about the current user's session

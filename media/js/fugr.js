@@ -62,7 +62,7 @@ $(function(){
 				// TODO: paginate this properly
 				for(var i = 0; i < feed_json.entries.length && i < MAX_AT_ONCE; i++) {
 					var entry = feed_json.entries[i];
-					console.log(entry);
+					//console.log(entry);
 					// entry.link
 					// entry.title
 					// entry.updated
@@ -71,7 +71,7 @@ $(function(){
 					feedcontainer.append(entryheader);
 				}
 				$('div#tab-read').append(feedcontainer);
-				feedcontainer.accordion({"collapsible": true, "autoHeight": false, "clearStyle": true, "active": false, "navigation": true});
+				feedcontainer.accordion({"collapsible": true, "autoHeight": false, "clearStyle": true, "active": false});
 			},
 			"json"
 		);

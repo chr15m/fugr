@@ -1,3 +1,10 @@
+
+Where does the name come from?
+
+	fugue-er - one who enjoys a good fugue or a good fugue-ing
+	
+	fugere - Latin - "to flee"
+
 Dependencies
 ------------
 

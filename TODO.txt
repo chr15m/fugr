@@ -1,5 +1,6 @@
  * font - Maven Pro? Ubuntu? or http://practicefoundry.com/collator.html?
 
+ * show non-tagged feeds at the top level
  * force ff and webkit to execute all scripts on 'back': $(window).unload( function () {} );
  * Progress bar for OPML upload
  * Fix json encoding of struct_time

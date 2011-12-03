@@ -71,7 +71,7 @@ $(function(){
 					feedcontainer.append(entryheader);
 				}
 				$('div#tab-read').append(feedcontainer);
-				feedcontainer.accordion({"collapsible": true});
+				feedcontainer.accordion({"collapsible": true, "autoHeight": false, "clearStyle": true, "active": false, "navigation": true});
 			},
 			"json"
 		);

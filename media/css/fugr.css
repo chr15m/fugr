@@ -5,13 +5,13 @@ body {
 	margin: 0px;
 }
 
-a {
+div.auth a {
 	color: #0073Ea;
 	text-decoration: none;
 	font-weight: bold;
 }
 
-a:hover {
+div.auth a:hover {
 	color: #18ce12;
 }
 

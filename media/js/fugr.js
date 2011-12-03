@@ -89,14 +89,16 @@ $(function(){
 			}
 		}
 		// add the link to summary feeds
-		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>All " + tagname + "</div>").click(make_load_func("/feeds/" + session.username + "/" + tagname)));
-		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>Interesting " + tagname + "</div>").click(make_load_func("/feeds/" + session.username + "/interesting/" + tagname)));
+		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>" + tagname + " - All</div>").click(make_load_func("/feeds/" + session.username + "/" + tagname)));
+		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>" + tagname + " - Interesting</div>").click(make_load_func("/feeds/" + session.username + "/interesting/" + tagname)));
 		var tagfeeds = session.tags[tagname];
 		// now put the feeds in there
-		for (var f=0; f<tagfeeds.length; f++) {
-			$("div#tab-read").append(
-				$("<div class='feed-link feedlist'>" + tagfeeds[f].title + "</div>").click(make_load_func(tagfeeds[f]))
-			);
+		if (typeof tagfeeds != "undefined") {
+			for (var f=0; f<tagfeeds.length; f++) {
+				$("div#tab-read").append(
+					$("<div class='feed-link feedlist'>" + tagfeeds[f].title + "</div>").click(make_load_func(tagfeeds[f]))
+				);
+			}
 		}
 		// add the folder icons
 		$("div.feed-link").addClass("ui-state-default");

@@ -69,11 +69,7 @@ def json_api(fn):
 @json_api
 def feeds(request):
 	""" Returns the data object representing this user's feeds. """
-	result = dict([(uf.feed.url, {"pk": uf.feed.pk, "blog_url": uf.feed.blog_url, "title": uf.feed.title, "tags": [t.tag for t in uf.tags.all()]}) for uf in UserFeed.objects.filter(user=request.user)])
-	from django.db import connection
-	from pprint import pprint
-	print(connection.queries)
-	return result
+	return dict([(uf.feed.url, {"pk": uf.feed.pk, "blog_url": uf.feed.blog_url, "title": uf.feed.title, "tags": [t.tag for t in uf.tags.all()]}) for uf in UserFeed.objects.filter(user=request.user)])
 
 @login_required
 @json_api

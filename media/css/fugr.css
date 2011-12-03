@@ -3,6 +3,7 @@ body {
 	color: #444444;
 	font-size: 1.5em;
 	margin: 0px;
+	margin-right: 1px;
 }
 
 div.auth a {
@@ -57,25 +58,50 @@ div#tab-read {
 }
 
 div#tab-read div.read-header {
-	height: 1.8em;
+	min-height: 2.3em;
 }
 
 div#tab-read div.read-header span.title {
-	display: inline-block;
-	width: 100%;
+	display: block;
+	max-width: 100%;
+	padding-left: 5.2em;
+	padding-right: 5.2em;
 	text-align: center;
-	padding-top: 0.2em;
+	padding-top: 0.6em;
+}
+
+div#tab-read div.read-header button {
+	height: 2em;
+	width: 5em;
+}
+
+div#tab-read div.read-header button span {
+	margin-left: auto;
+	margin-right: auto;
 }
 
 div#tab-read div.read-header button#read-back {
 	position: relative;
-	top: -1.2em;
+	top: 0.2em;
 	margin-left: 0.1em;
+	float: left;
 }
 
 div#tab-read div.read-header button#read-refresh {
 	float: right;
 	position: relative;
-	top: -1.2em;
+	top: 0.2em;
 }
 
+div.feedcontent {
+	padding: 0 .5em !important;
+}
+
+div.feedcontent img {
+	margin: 10px;
+}
+
+div.feedcontent div.feedinfo {
+	text-align: right;
+	font-size: 0.75em;
+}

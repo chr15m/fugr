@@ -12,10 +12,6 @@ $(function(){
 	// this header will hang out at the top of the read area
 	function set_header(title, backfunc) {
 		var headerhtml = $("<div class='read-header ui-state-default'></div>");
-		// add the title they requested
-		if (typeof(title) != "undefined") {
-			headerhtml.append("<span class='title'>" + title + "</span>");
-		}
 		// if there is a backfunc callback
 		if (backfunc) {
 			headerhtml.append($("<button id='read-back' class='ui-widget ui-button headerbutton'><span class='ui-icon ui-icon-circle-arrow-w'></span></button>").click(function(e) {
@@ -24,6 +20,10 @@ $(function(){
 		}
 		// refresh button
 		headerhtml.append("<button id='read-refresh' class='ui-widget ui-button headerbutton'><span class='ui-icon ui-icon-arrowrefresh-1-e'></span></button>");
+		// add the title they requested
+		if (typeof(title) != "undefined") {
+			headerhtml.append("<span class='title'>" + title + "</span>");
+		}
 		$('div#tab-read').html(headerhtml);
 		// turn those things into jquery ui buttons
 		$('button.headerbutton').button();
@@ -67,7 +67,7 @@ $(function(){
 					// entry.title
 					// entry.updated
 					// entry.content[0].value
-					var entryheader = $("<h3><a href='#'>" + entry.title + "</a></h3><div>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : entry.summary ) + "</div>");
+					var entryheader = $("<h3><a href='#'>" + entry.title + "</a></h3><div class='feedcontent'><div class='feedinfo'>" + entry.updated + "</div>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : entry.summary ) + "</div>");
 					feedcontainer.append(entryheader);
 				}
 				$('div#tab-read').append(feedcontainer);

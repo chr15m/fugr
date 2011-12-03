@@ -71,7 +71,8 @@ def feeds(request):
 	""" Returns the data object representing this user's feeds. """
 	result = dict([(uf.feed.url, {"pk": uf.feed.pk, "blog_url": uf.feed.blog_url, "title": uf.feed.title, "tags": [t.tag for t in uf.tags.all()]}) for uf in UserFeed.objects.filter(user=request.user)])
 	from django.db import connection
-	print connection.queries
+	from pprint import pprint
+	print(connection.queries)
 	return result
 
 @login_required
@@ -83,5 +84,5 @@ def feed(request, feed_url):
 		pass
 	else:
 		# TODO: hmm, shouldn't bother un-encoding and re-encoding this json object like this - probably expensive
-		return get_object_or_404(UserFeed, user=request.user, feed__url=feed_url).feed.get_cached_feed()
+		return get_object_or_404(UserFeed, user=request.user, feed__url=feed_url).feed.feeddata.get_cached_feed()
 

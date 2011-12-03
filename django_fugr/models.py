@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 import base64
 
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.db import models
 
 import cPickle as pickle
@@ -15,53 +17,7 @@ class FeedTag(models.Model):
 	def __unicode__(self):
 		return unicode(self.tag)
 
-class FeedData(models.Model):
-	""" The heavy duty data contained in this feed, including latest feedparser object fetched. """
-	parsed = models.TextField(null=True)
-	etag = models.CharField(max_length=256, null=True, blank=True)
-	last_modified = models.DateTimeField(null=True, blank=True)
-	last_update = models.DateTimeField(null=True)
-	
-	def update_feed(self):
-		""" Refreshes the cached version of the parsed feed from the remote URL. """
-		url = getattr(self, "url", None)
-		if (url):
-			parsed = feedparser.parse(url, etag=self.etag, modified=self.last_modified)
-			if hasattr(parsed, "status"):
-				if parsed.status == 304:
-					# nothing has changed since our last update
-					print url, "Feed not modified"
-				else:
-					# TODO: handle other statuses like redirect?
-					# store the etag and modified fields to not re-request unchanged feeds next time
-					self.etag = getattr(parsed, "etag", None)
-					modified = getattr(parsed, "modified", None)
-					self.last_modified = modified and datetime(*modified[:6]) or None
-					# if the bozo flag is set, turn the resulting exception into a string so we can encode it
-					if parsed.bozo:
-						# this object does not always serialize nicely
-						parsed.bozo_exception = str(parsed.bozo_exception)
-					# store the pickle of the parsed feed we fetched in a b64 blob
-					# TODO: also store pickle.DEFAULT_PROTOCOL and other serializing format info
-					self.parsed = base64.encodestring(pickle.dumps(parsed))
-					print url, "Stored", len(self.parsed), "bytes"
-			else:
-				print url, "Feed did not return a valid status"
-			self.last_update = datetime.now()
-			self.save()
-		else:
-			# malformed object - should always be a Feed child
-			pass
-	
-	def get_cached_feed(self):
-		""" Unpickles and returns the cached version of the feedparser object. """
-		# check if we have a recent copy of this feed
-		if self.parsed is None or self.last_update < datetime.now() - timedelta(days=1):
-			# for whatever reason we don't have a recent copy of this feed
-			self.update_feed()
-		return pickle.loads(base64.decodestring(self.parsed))
-
-class Feed(FeedData):
+class Feed(models.Model):
 	""" Represents a single rss/atom feed located at a particular URL. """
 	title = models.CharField(max_length=1024)
 	blog_url = models.CharField(max_length=1024)
@@ -69,6 +25,54 @@ class Feed(FeedData):
 	
 	def __unicode__(self):
 		return unicode(self.title)
+
+class FeedData(models.Model):
+	""" The heavy duty data contained in this feed, including latest feedparser object fetched. """
+	parsed = models.TextField(null=True)
+	etag = models.CharField(max_length=256, null=True, blank=True)
+	last_modified = models.DateTimeField(null=True, blank=True)
+	last_update = models.DateTimeField(null=True)
+	feed = models.OneToOneField(Feed, null=True)
+	
+	def update_feed(self, url):
+		""" Refreshes the cached version of the parsed feed from the remote URL. """
+		parsed = feedparser.parse(url, etag=self.etag, modified=self.last_modified)
+		if hasattr(parsed, "status"):
+			if parsed.status == 304:
+				# nothing has changed since our last update
+				print url, "Feed not modified"
+			else:
+				# TODO: handle other statuses like redirect?
+				# store the etag and modified fields to not re-request unchanged feeds next time
+				self.etag = getattr(parsed, "etag", None)
+				modified = getattr(parsed, "modified", None)
+				self.last_modified = modified and datetime(*modified[:6]) or None
+				# if the bozo flag is set, turn the resulting exception into a string so we can encode it
+				if parsed.bozo:
+					# this object does not always serialize nicely
+					parsed.bozo_exception = str(parsed.bozo_exception)
+				# store the pickle of the parsed feed we fetched in a b64 blob
+				# TODO: also store pickle.DEFAULT_PROTOCOL and other serializing format info
+				self.parsed = base64.encodestring(pickle.dumps(parsed))
+				print url, "Stored", len(self.parsed), "bytes"
+		else:
+			print url, "Feed did not return a valid status"
+		self.last_update = datetime.now()
+		self.save()
+	
+	def get_cached_feed(self):
+		""" Unpickles and returns the cached version of the feedparser object. """
+		# check if we have a recent copy of this feed
+		if self.parsed is None or self.last_update < datetime.now() - timedelta(days=1) and self.feed:
+			# for whatever reason we don't have a recent copy of this feed
+			self.update_feed(self.feed.url)
+		return pickle.loads(base64.decodestring(self.parsed))
+
+# When a Feed is created, also create the FeedData object that belongs to it
+@receiver(post_save, sender=Feed)
+def create_feeddata(sender, instance, created, **kwargs):
+    if created:
+        FeedData.objects.create(feed=instance)
 
 class UserFeed(models.Model):
 	""" Links a user to a feed with the tags that user has applied to that feed. """

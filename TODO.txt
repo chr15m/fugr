@@ -1,7 +1,7 @@
  * font - Maven Pro? Ubuntu? or http://practicefoundry.com/collator.html?
 
- * show non-tagged feeds at the top level
- * force ff and webkit to execute all scripts on 'back': $(window).unload( function () {} );
+ * Ability to change feed tags
+
  * Progress bar for OPML upload
  * Fix json encoding of struct_time
  * Add-feed-by-url interface working
@@ -10,9 +10,10 @@
    * About link in the about bar (dialog popup)
    * Source code link in the about bar
    * Feature request link in the about bar
- * Ability to change feed tags
 
- * Donate button in comments page.
+ * Donate button somewhere.
+ * Ads?
+ * Get rid of ads - subscription?
 
  * Clone Reader usability
    * 'All items' is default view
@@ -43,9 +44,12 @@
  * "Downloadable" version made with xulrunner
    * Android app?
 
+ * force ff and webkit to execute all scripts on 'back': $(window).unload( function () {} );
+
 Done
 ----
 
+ + show non-tagged feeds at the top level
  + Actually fetch some feeds
     import feedparser
     d = feedparser.parse("http://feeds.delicious.com/v2/rss/twelvetone")

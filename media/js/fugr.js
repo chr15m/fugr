@@ -72,7 +72,7 @@ $(function(){
 					// entry.title
 					// entry.updated
 					// entry.content[0].value
-					var entryheader = $("<h3><a href='#'>" + entry.title + "</a></h3><div class='feedcontent'><div class='feedinfo'>" + entry.updated + "</div>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : entry.summary ) + "</div>");
+					var entryheader = $("<h3 class='entry'><a href='#'>" + entry.title + "</a></h3><div class='feedcontent'><div class='feedinfo'>" + entry.updated + "</div>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : entry.summary ) + "</div>");
 					feedcontainer.append(entryheader);
 				}
 				$('div#tab-read').append(feedcontainer);

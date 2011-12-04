@@ -93,6 +93,14 @@ div#tab-read div.read-header button#read-refresh {
 	top: 0.2em;
 }
 
+h3.entry a {
+	color: #444444 !important;
+}
+
+h3.entry.read a {
+	color: #888888 !important;
+}
+
 div.feedcontent {
 	padding: 0 .5em !important;
 }

@@ -102,14 +102,23 @@ h3.entry.read a {
 }
 
 div.feedcontent {
-	padding: 0 .5em !important;
+	padding: 0 0 !important;
 }
 
 div.feedcontent img {
-	margin: 10px;
+	margin: .2em;
 }
 
 div.feedcontent div.feedinfo {
 	text-align: right;
 	font-size: 0.75em;
+	background-color: #f0f0f0;
+	background-image: url('custom-theme/images/ui-bg_diagonals-thick_50_dddddd_40x40.png');
+	border-bottom: #f8f8f8;
+	margin: 0px;
+	padding: 0.3em;
+}
+
+div.feedcontent div.feedcontent-inner {
+	padding: .5em .5em !important;
 }

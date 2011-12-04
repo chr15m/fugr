@@ -82,12 +82,18 @@ $(function(){
 					"clearStyle": true,
 					"active": false,
 					"change": function(ev, ui) {
+						var dest = $(ui.newContent)
 						// get the entry data for this element
-						var entry = feed_json.entries[parseInt($(ui.newContent).attr("entry_id"))];
+						var entry = feed_json.entries[parseInt(dest.attr("entry_id"))];
 						if (entry) {
-							ui.newContent.append($("<div class='feedinfo'>" + entry.updated + "</div>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : entry.summary )));
+							var likebutton = $("<button class='ui-widget ui-button like-button'><span class='ui-icon ui-icon-heart'></span></button>");
+							var starbutton = $("<button class='ui-widget ui-button star-button'><span class='ui-icon ui-icon-star'></span></button>");
+							var bar = $("<div class='feedinfo'>" + entry.updated + "</div>").prepend(starbutton).prepend(likebutton);
+							dest.html(bar)
+							dest.append($("<div class='feedcontent-inner'>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : entry.summary) + "</div>"));
+							dest.append(bar.clone());
 							// scroll to the new entry
-							$('html, body').scrollTop($(ui.newContent).prev().offset().top);
+							$('html, body').scrollTop(dest.prev().offset().top);
 						}
 					}
 				});

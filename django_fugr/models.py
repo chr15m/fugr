@@ -77,13 +77,17 @@ class FeedData(models.Model):
 		self.last_update = datetime.now()
 		self.save()
 	
-	def get_cached_feed(self):
+	def get_cached_feed(self, user):
 		""" Unpickles and returns the cached version of the feedparser object. """
 		# check if we have a recent copy of this feed
 		if self.parsed is None or self.last_update < datetime.now() - timedelta(days=1) and self.feed:
 			# for whatever reason we don't have a recent copy of this feed
 			self.update_feed()
-		return pickle.loads(base64.decodestring(self.parsed))
+		feed = pickle.loads(base64.decodestring(self.parsed))
+		#entries = UserEntry.objects.filter(user=user, entry__feeds__contains=self.feed)[:settings.FEED_ITEMS_PER_REQUEST]
+		feed.entries = [e.entry_for_user(user) for e in self.feed.entry_set.all()]
+		#print entries
+		return feed
 	
 	def __unicode__(self):
 		return self.feed.__unicode__()
@@ -110,6 +114,22 @@ class Entry(models.Model):
 	date = models.DateTimeField(null=True)
 	feeds = models.ManyToManyField(Feed)
 	parsed = models.TextField(null=True)
+	
+	def entry_for_user(self, user):
+		# entry.link
+		# entry.title
+		# entry.updated
+		# entry.content[0].value
+		entry_data = pickle.loads(base64.decodestring(self.parsed))
+		try:
+			user_data = self.userentry_set.get()
+		except UserEntry.DoesNotExist:
+			user_data = UserEntry()
+		if user_data:
+			entry_data.like = user_data.like
+			entry_data.read = user_data.read
+			entry_data.star = user_data.star
+		return entry_data
 	
 	def __unicode__(self):
 		return self.date.strftime("%Y-%m-%d %H:%M") + " " + self.title

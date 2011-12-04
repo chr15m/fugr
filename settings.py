@@ -165,8 +165,11 @@ USER_DATA_DIR = os.path.join(PROJECT_ROOT, "userdata")
 FEED_FETCHER_POOL_SIZE = 10
 
 # Google Reader marks things as read automatically if they are older than 30 days
-# TODO: make this configurable by the user
+# TODO: make this configurable by the user?
 SHOW_AS_READ_AFTER_X_DAYS = 30
+
+# how many feed items to fetch at a time
+FEED_ITEMS_PER_REQUEST = 20
 
 # cached data
 CACHES = {

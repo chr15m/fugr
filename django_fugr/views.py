@@ -2,6 +2,7 @@ from json import dumps
 import urllib2
 import hashlib
 import base64
+from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
@@ -13,11 +14,24 @@ from django.core.cache import cache
 from parse_opml import parse_opml
 from json_encode import json_encode
 
-from models import Feed, FeedTag, UserFeed
+from models import Feed, FeedTag, UserFeed, UserEntry
 
 @login_required
 def index(request):
 	return direct_to_template(request, "index.html", {"username": json_encode(request.user)})
+
+############### USER ACTIONS ###############
+
+@login_required
+def update_entry(request, update_type, value, uid):
+	# star, like, read
+	e = get_object_or_404(UserEntry, entry__uid=uid, user=request.user)
+	if update_type in ("read", "like", "start"):
+		if value == "true":
+			setattr(e, update_type, datetime.now())
+		elif value == "false":
+			setattr(e, update_type, None)
+	return HttpResponse(json_encode(e), mime_type="text/plain")
 
 ############### OPML UPLOAD ###############
 
@@ -80,5 +94,5 @@ def feed(request, feed_url):
 		pass
 	else:
 		# TODO: hmm, shouldn't bother un-encoding and re-encoding this json object like this - probably expensive
-		return get_object_or_404(UserFeed, user=request.user, feed__url=feed_url).feed.feeddata.get_cached_feed()
+		return get_object_or_404(UserFeed, user=request.user, feed__url=feed_url).feed.feeddata.get_cached_feed(request.user)
 

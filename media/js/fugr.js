@@ -67,11 +67,12 @@ $(function(){
 				// TODO: paginate this properly
 				for(var i = 0; i < feed_json.entries.length && i < MAX_AT_ONCE; i++) {
 					var entry = feed_json.entries[i];
-					//console.log(entry);
 					// entry.link
 					// entry.title
 					// entry.updated
 					// entry.content[0].value
+					// TODO: if there are multiple content parts show them all
+					// TODO: check if content parts are some other mimetype like mp3 or whatever
 					var entryheader = $("<h3 class='entry'><a href='#'>" + entry.title + "</a></h3><div class='feedcontent'><div class='feedinfo'>" + entry.updated + "</div>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : entry.summary ) + "</div>");
 					feedcontainer.append(entryheader);
 				}

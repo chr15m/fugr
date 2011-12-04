@@ -28,11 +28,11 @@ class Feed(models.Model):
 
 class FeedData(models.Model):
 	""" The heavy duty data contained in this feed, including latest feedparser object fetched. """
-	parsed = models.TextField(null=True)
 	etag = models.CharField(max_length=256, null=True, blank=True)
 	last_modified = models.DateTimeField(null=True, blank=True)
 	last_update = models.DateTimeField(null=True)
 	feed = models.OneToOneField(Feed, null=True)
+	parsed = models.TextField(null=True)
 	
 	def update_feed(self):
 		""" Refreshes the cached version of the parsed feed from the remote URL. """
@@ -56,6 +56,22 @@ class FeedData(models.Model):
 				# TODO: also store pickle.DEFAULT_PROTOCOL and other serializing format info
 				self.parsed = base64.encodestring(pickle.dumps(parsed))
 				print url, "Stored", len(self.parsed), "bytes"
+				# get or create all entries in this feed from the database
+				for entry_data in getattr(parsed, "entries", []):
+					uid = entry_data.guidislink and entry_data.get("link", None) or entry_data.get("id", None)
+					if uid:
+						entry, created = Entry.objects.get_or_create(uid=entry_data.id)
+						# update all the relevant info for this entry from the feed
+						updated = entry_data.get("updated_parsed", None)
+						entry.date = updated and datetime(*updated[:6]) or None
+						entry.title = entry_data.get("title", "")
+						entry.parsed = base64.encodestring(pickle.dumps(entry_data))
+						if not self in entry.feeds.all():
+							entry.feeds.add(self.feed)
+						entry.save()
+					else:
+						pass
+						# malformed entry, not really sure what to do
 		else:
 			print url, "Feed did not return a valid status"
 		self.last_update = datetime.now()
@@ -68,12 +84,15 @@ class FeedData(models.Model):
 			# for whatever reason we don't have a recent copy of this feed
 			self.update_feed()
 		return pickle.loads(base64.decodestring(self.parsed))
+	
+	def __unicode__(self):
+		return self.feed.__unicode__()
 
 # When a Feed is created, also create the FeedData object that belongs to it
 @receiver(post_save, sender=Feed)
 def create_feeddata(sender, instance, created, **kwargs):
-    if created:
-        FeedData.objects.create(feed=instance)
+	if created:
+		FeedData.objects.create(feed=instance)
 
 class UserFeed(models.Model):
 	""" Links a user to a feed with the tags that user has applied to that feed. """
@@ -85,8 +104,15 @@ class UserFeed(models.Model):
 		return unicode(self.user) + " - " + unicode(self.feed) + " " + str(self.tags.all())
 
 class Entry(models.Model):
-	parsed = models.TextField(null=True)
+	""" Single entry from a feed including a cached version of the parsed object. """
+	title = models.CharField(max_length=1024, null=True)
 	uid = models.CharField(max_length=256)
+	date = models.DateTimeField(null=True)
+	feeds = models.ManyToManyField(Feed)
+	parsed = models.TextField(null=True)
+	
+	def __unicode__(self):
+		return self.date.strftime("%Y-%m-%d %H:%M") + " " + self.title
 
 class UserEntry(models.Model):
 	""" Relationship a user has to a particular entry in a feed. """

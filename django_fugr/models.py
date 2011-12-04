@@ -50,6 +50,9 @@ class FeedData(models.Model):
 				self.etag = getattr(parsed, "etag", None)
 				modified = getattr(parsed, "modified", None)
 				self.last_modified = modified and datetime(*modified[:6]) or None
+				# make sure we have the latest title from the feed itself
+				self.feed.title = getattr(parsed.feed, "title", self.feed.title)
+				self.feed.save()
 				# if the bozo flag is set, turn the resulting exception into a string so we can encode it
 				if parsed.bozo:
 					# this object does not always serialize nicely
@@ -60,7 +63,7 @@ class FeedData(models.Model):
 				print url, "Stored", len(self.parsed), "bytes"
 				# get or create all entries in this feed from the database
 				for entry_data in getattr(parsed, "entries", []):
-					uid = entry_data.guidislink and entry_data.get("link", None) or entry_data.get("id", None)
+					uid = getattr(entry_data, "guidislink", False) and getattr(entry_data, "link", None) or getattr(entry_data, "id", None)
 					if uid:
 						entry, created = Entry.objects.get_or_create(uid=entry_data.id)
 						# update all the relevant info for this entry from the feed

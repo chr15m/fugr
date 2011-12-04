@@ -4,7 +4,6 @@ $(function(){
 		$("body").css({"font-size": ".9em"});
 	}
 	
-	var MAX_AT_ONCE = 10;
 	
 	// global object holding all data about the current user's session
 	var session = {
@@ -65,7 +64,7 @@ $(function(){
 				set_header("<a href='" + feed_json.feed.link + "'>" + feed_json.feed.title + "</a>", backfunc);
 				var feedcontainer = $("<div></div>");
 				// TODO: paginate this properly
-				for(var i = 0; i < feed_json.entries.length && i < MAX_AT_ONCE; i++) {
+				for(var i = 0; i < feed_json.entries.length; i++) {
 					var entry = feed_json.entries[i];
 					// entry.link
 					// entry.title

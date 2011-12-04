@@ -10,6 +10,8 @@ import cPickle as pickle
 
 import feedparser
 
+import settings
+
 class FeedTag(models.Model):
 	""" A tag that a user can apply to a feed. """
 	tag = models.CharField(max_length=256)
@@ -84,9 +86,8 @@ class FeedData(models.Model):
 			# for whatever reason we don't have a recent copy of this feed
 			self.update_feed()
 		feed = pickle.loads(base64.decodestring(self.parsed))
-		#entries = UserEntry.objects.filter(user=user, entry__feeds__contains=self.feed)[:settings.FEED_ITEMS_PER_REQUEST]
-		feed.entries = [e.entry_for_user(user) for e in self.feed.entry_set.all()]
-		#print entries
+		# add the entries with the user data for this user
+		feed.entries = [e.entry_for_user(user) for e in self.feed.entry_set.all()[:settings.FEED_ITEMS_PER_REQUEST]]
 		return feed
 	
 	def __unicode__(self):

@@ -117,10 +117,7 @@ class Entry(models.Model):
 	parsed = models.TextField(null=True)
 	
 	def entry_for_user(self, user):
-		# entry.link
-		# entry.title
-		# entry.updated
-		# entry.content[0].value
+		""" Get the entry with the entry data applied by the user. """
 		entry_data = pickle.loads(base64.decodestring(self.parsed))
 		try:
 			user_data = self.userentry_set.get()

@@ -25,12 +25,14 @@ def index(request):
 @login_required
 def update_entry(request, update_type, value, uid):
 	# star, like, read
-	e = get_object_or_404(UserEntry, entry__uid=uid, user=request.user)
+	#e = get_object_or_404(UserEntry, entry__uid=uid, user=request.user)
+	e, created = UserEntry.objects.get_or_create(entry__uid=uid, user=request.user)
 	if update_type in ("read", "like", "start"):
 		if value == "true":
 			setattr(e, update_type, datetime.now())
 		elif value == "false":
 			setattr(e, update_type, None)
+	e.save()
 	return HttpResponse(json_encode(e), mime_type="text/plain")
 
 ############### OPML UPLOAD ###############

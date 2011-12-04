@@ -72,11 +72,25 @@ $(function(){
 					// entry.content[0].value
 					// TODO: if there are multiple content parts show them all
 					// TODO: check if content parts are some other mimetype like mp3 or whatever
-					var entryheader = $("<h3 class='entry'><a href='#'>" + entry.title + "</a></h3><div class='feedcontent'><div class='feedinfo'>" + entry.updated + "</div>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : entry.summary ) + "</div>");
+					var entryheader = $("<h3 class='entry'><a href='#'>" + entry.title + "</a></h3><div class='feedcontent' entry_id='" + i + "'></div>");
 					feedcontainer.append(entryheader);
 				}
 				$('div#tab-read').append(feedcontainer);
-				feedcontainer.accordion({"collapsible": true, "autoHeight": false, "clearStyle": true, "active": false});
+				feedcontainer.accordion({
+					"collapsible": true,
+					"autoHeight": false,
+					"clearStyle": true,
+					"active": false,
+					"change": function(ev, ui) {
+						// get the entry data for this element
+						var entry = feed_json.entries[parseInt($(ui.newContent).attr("entry_id"))];
+						if (entry) {
+							ui.newContent.append($("<div class='feedinfo'>" + entry.updated + "</div>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : entry.summary )));
+							// scroll to the new entry
+							$('html, body').scrollTop($(ui.newContent).prev().offset().top);
+						}
+					}
+				});
 			},
 			"json"
 		);

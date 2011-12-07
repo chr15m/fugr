@@ -54,6 +54,30 @@ $(function(){
 		$('form#opml-upload').submit();
 	});
 	
+	// updates an entry with the user action (e.g. mark read, like, star)
+	function update_entry(which, entry, update_type) {
+		// URL = /update_type/value/uid
+		// which = originating element
+		// update_type = "read", "like", "star"
+		// uid = uid of the entry
+		
+		var inner = $(which).find("span.ui-button-text span");
+		inner.html($("<img src='media/img/loader-small.gif'/>").css({
+			"float": "left",
+			"padding": "0px",
+			"margin": "0px"
+		}));
+		var obg = inner.css("background-image");
+		inner.css({"background-image": "none"});
+		$(which).removeClass("ui-state-hover");
+		$(which).removeClass("ui-state-focus");
+		var value = !inner.hasClass("ui-state-active");
+		var uid = entry.id;
+		console.log(value, uid);
+		// send ajax request
+		//inner.addClass("ui-state-active");
+	}
+	
 	// loads a particular feed into the read area
 	function load_feed(feed, backfunc) {
 		// show spinner while we load
@@ -86,9 +110,11 @@ $(function(){
 						// get the entry data for this element
 						var entry = feed_json.entries[parseInt(dest.attr("entry_id"))];
 						if (entry) {
-							var likebutton = $("<button class='ui-widget ui-button like-button'><span class='ui-icon ui-icon-heart'></span></button>");
-							var starbutton = $("<button class='ui-widget ui-button star-button'><span class='ui-icon ui-icon-star'></span></button>");
-							var bar = $("<div class='feedinfo'>" + entry.updated + "</div>").prepend(starbutton).prepend(likebutton);
+							var likebutton = $("<button class='ui-widget ui-button like-button' title='Like this article'><span class='ui-icon ui-icon-heart'></span></button>").button().click(function(){ update_entry(this, entry, "like"); });
+							var starbutton = $("<button class='ui-widget ui-button star-button' title='Star this article'><span class='ui-icon ui-icon-star'></span></button>").button();
+							var readbutton = $("<button class='ui-widget ui-button read-button' title='Mark this article as read'><span class='ui-icon ui-icon-check'></span></button>").button();
+							var buttons = $("<div class='feedbuttons'></div>").append(starbutton).append(likebutton).append(readbutton);
+							var bar = $("<div class='feedinfo'>" + entry.updated + "</div>").prepend(buttons);
 							dest.html(bar)
 							dest.append($("<div class='feedcontent-inner'>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : entry.summary) + "</div>"));
 							dest.append(bar.clone());

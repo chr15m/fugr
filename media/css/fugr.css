@@ -116,7 +116,12 @@ div.feedcontent div.feedinfo {
 	background-image: url('custom-theme/images/ui-bg_diagonals-thick_50_dddddd_40x40.png');
 	border-bottom: #f8f8f8;
 	margin: 0px;
-	padding: 0.3em;
+	padding: 0.5em;
+}
+
+div.feedcontent div.feedinfo div.feedbuttons {
+	float: left;
+	margin-top: -0.25em;
 }
 
 div.feedcontent div.feedcontent-inner {

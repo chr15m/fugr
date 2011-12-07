@@ -54,6 +54,9 @@ $(function(){
 		$('form#opml-upload').submit();
 	});
 	
+	// different types of update we can register with the server
+	update_types = ["like", "star", "read"];
+	
 	// updates an entry with the user action (e.g. mark read, like, star)
 	function update_entry(which, entry, update_type) {
 		// URL = /update_type/value/uid
@@ -62,19 +65,34 @@ $(function(){
 		// uid = uid of the entry
 		
 		var inner = $(which).find("span.ui-button-text span");
-		inner.html($("<img src='media/img/loader-small.gif'/>").css({
+		var spinner = $("<img src='media/img/loader-small.gif'/>").css({
 			"float": "left",
 			"padding": "0px",
 			"margin": "0px"
-		}));
+		});
+		inner.html(spinner);
 		var obg = inner.css("background-image");
 		inner.css({"background-image": "none"});
 		$(which).removeClass("ui-state-hover");
 		$(which).removeClass("ui-state-focus");
-		var value = !inner.hasClass("ui-state-active");
+		var value = !inner.hasClass("ui-state-highlight");
 		var uid = entry.id;
-		console.log(value, uid);
+		//console.log(value, uid);
 		// send ajax request
+		$.get("/fugr/update-entry/" + update_type + "/" + value + "/" + escape(uid), function(result) {
+			console.log(result);
+			if (result["fields"]) {
+				// stop the spinner from happening
+				spinner.remove();
+				if (result["fields"][update_type] == null) {
+					$(which).removeClass("ui-state-highlight");
+				} else {
+					$(which).removeClasS("ui-state-default");
+					$(which).addClass("ui-state-highlight");
+				}
+				inner.css({"background-image": ""});
+			}
+		}, "json");
 		//inner.addClass("ui-state-active");
 	}
 	
@@ -111,8 +129,8 @@ $(function(){
 						var entry = feed_json.entries[parseInt(dest.attr("entry_id"))];
 						if (entry) {
 							var likebutton = $("<button class='ui-widget ui-button like-button' title='Like this article'><span class='ui-icon ui-icon-heart'></span></button>").button().click(function(){ update_entry(this, entry, "like"); });
-							var starbutton = $("<button class='ui-widget ui-button star-button' title='Star this article'><span class='ui-icon ui-icon-star'></span></button>").button();
-							var readbutton = $("<button class='ui-widget ui-button read-button' title='Mark this article as read'><span class='ui-icon ui-icon-check'></span></button>").button();
+							var starbutton = $("<button class='ui-widget ui-button star-button' title='Star this article'><span class='ui-icon ui-icon-star'></span></button>").button().click(function(){ update_entry(this, entry, "star"); });
+							var readbutton = $("<button class='ui-widget ui-button read-button' title='Mark this article as read'><span class='ui-icon ui-icon-check'></span></button>").button().click(function(){ update_entry(this, entry, "read"); });
 							var buttons = $("<div class='feedbuttons'></div>").append(starbutton).append(likebutton).append(readbutton);
 							var bar = $("<div class='feedinfo'>" + entry.updated + "</div>").prepend(buttons);
 							dest.html(bar)

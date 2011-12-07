@@ -14,7 +14,7 @@ from django.core.cache import cache
 from parse_opml import parse_opml
 from json_encode import json_encode
 
-from models import Feed, FeedTag, UserFeed, UserEntry
+from models import Feed, FeedTag, UserFeed, Entry, UserEntry
 
 @login_required
 def index(request):
@@ -26,14 +26,15 @@ def index(request):
 def update_entry(request, update_type, value, uid):
 	# star, like, read
 	#e = get_object_or_404(UserEntry, entry__uid=uid, user=request.user)
-	e, created = UserEntry.objects.get_or_create(entry__uid=uid, user=request.user)
+	e = get_object_or_404(Entry, uid=uid)
+	ue, created = UserEntry.objects.get_or_create(entry=e, user=request.user)
 	if update_type in ("read", "like", "start"):
 		if value == "true":
-			setattr(e, update_type, datetime.now())
+			setattr(ue, update_type, datetime.now())
 		elif value == "false":
-			setattr(e, update_type, None)
-	e.save()
-	return HttpResponse(json_encode(e), mime_type="text/plain")
+			setattr(ue, update_type, None)
+	ue.save()
+	return HttpResponse(json_encode(ue), mimetype="text/plain")
 
 ############### OPML UPLOAD ###############
 

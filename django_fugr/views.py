@@ -14,15 +14,74 @@ from django.core.cache import cache
 from parse_opml import parse_opml
 from json_encode import json_encode
 
-from models import Feed, FeedTag, UserFeed, Entry, UserEntry
+from models import Feed, FeedTag, UserFeed, Entry, UserEntry, OpmlProgress
 
 @login_required
 def index(request):
 	return direct_to_template(request, "index.html", {"username": json_encode(request.user)})
 
-############### USER ACTIONS ###############
+############### OPML UPLOAD ###############
 
 @login_required
+def opml_upload(request):
+	progress, created = OpmlProgress.objects.get_or_create(user=request.user)
+	def opml_progress(progress, value, msg):
+		progress.value = value
+		progress.log += msg + "\n"
+		progress.save()
+	uploaded = request.FILES.get('opml-upload')
+	if uploaded:
+		opmldata = parse_opml(uploaded.read())
+		# create or modify feed objects for this opml data
+		uploaded.close()
+		# what the inside of each tuple looks like
+		# u'http://bitcoinmorpheus.tumblr.com/rss': {'blog_url': u'http://bitcoinmorpheus.tumblr.com/',
+                #                            'labels': set([u'bitcoin',
+                #                                           u'economics']),
+                #                            'title': u'Bitcoin Morpheus'},
+		opml_progress(progress, 0, "OPML data parsed")
+		opml_count = 0.0
+		# go through every feed creating the stuff
+		for feed_url in opmldata:
+			# get or create the tags listed against this feed for this user
+			tags = []
+			for tag in opmldata[feed_url]["labels"]:
+				tagobject, created = FeedTag.objects.get_or_create(tag=tag)
+				tags.append(tagobject)
+				tagobject.save()
+				opml_progress(progress, opml_count / len(opmldata), u'Added tag: ' + unicode(tagobject))
+			# get or create the feed
+			feed, created = Feed.objects.get_or_create(url=feed_url, title=opmldata[feed_url]["title"], blog_url=opmldata[feed_url]["blog_url"])
+			feed.save()
+			# now assign this feed with these tags to the current user
+			uf, created = UserFeed.objects.get_or_create(user=request.user, feed=feed)
+			uf.tags = tags
+			uf.save()
+			# increment the progress counter
+			opml_count += 1
+			opml_progress(progress, opml_count / len(opmldata), u'Added feed: ' + unicode(feed))
+	return HttpResponseRedirect(reverse("index"))
+
+############### JSON API CALLS ###############
+
+def json_api(fn):
+	def newfunc(request, *args, **kwargs):
+		return HttpResponse(json_encode(fn(request, *args, **kwargs)), mimetype="text/plain")
+	return newfunc
+
+### OPML progress ###
+
+@login_required
+@json_api
+def opml_progress(request):
+	""" Tell the user where their OPML upload is up to. """
+	progress, created = OpmlProgress.objects.get_or_create(user=request.user)
+	return {"value": progress.value, "log": progress.log}
+
+### User actions ###
+
+@login_required
+@json_api
 def update_entry(request, update_type, value, uid):
 	# star, like, read
 	#e = get_object_or_404(UserEntry, entry__uid=uid, user=request.user)
@@ -34,53 +93,9 @@ def update_entry(request, update_type, value, uid):
 		elif value == "false":
 			setattr(ue, update_type, None)
 	ue.save()
-	return HttpResponse(json_encode(ue), mimetype="text/plain")
+	return ue
 
-############### OPML UPLOAD ###############
-
-@login_required
-def opml_upload(request):
-	# TODO: provide feedback to the user - progress bar
-	uploaded = request.FILES.get('opml-upload')
-	if uploaded:
-		opmldata = parse_opml(uploaded.read())
-		# create or modify feed objects for this opml data
-		uploaded.close()
-		# what the inside of each tuple looks like
-		# u'http://bitcoinmorpheus.tumblr.com/rss': {'blog_url': u'http://bitcoinmorpheus.tumblr.com/',
-                #                            'labels': set([u'bitcoin',
-                #                                           u'economics']),
-                #                            'title': u'Bitcoin Morpheus'},
-		# go through every feed creating the stuff
-		for feed_url in opmldata:
-			# get or create the tags listed against this feed for this user
-			tags = []
-			for tag in opmldata[feed_url]["labels"]:
-				tagobject, created = FeedTag.objects.get_or_create(tag=tag)
-				tags.append(tagobject)
-				tagobject.save()
-				print 'FeedTag:', tagobject
-			# get or create the feed
-			feed, created = Feed.objects.get_or_create(url=feed_url, title=opmldata[feed_url]["title"], blog_url=opmldata[feed_url]["blog_url"])
-			feed.save()
-			print 'Feed:', feed
-			# now assign this feed with these tags to the current user
-			uf, created = UserFeed.objects.get_or_create(user=request.user, feed=feed)
-			uf.tags = tags
-			uf.save()
-			print 'UserFeed:', feed
-	return HttpResponseRedirect(reverse("index"))
-
-############### Feeds we publish ###############
-
-
-
-############### JSON API ###############
-
-def json_api(fn):
-	def newfunc(request, *args, **kwargs):
-		return HttpResponse(json_encode(fn(request, *args, **kwargs)), mimetype="text/plain")
-	return newfunc
+### User feeds ###
 
 @login_required
 @json_api

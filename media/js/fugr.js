@@ -4,7 +4,6 @@ $(function(){
 		$("body").css({"font-size": ".9em"});
 	}
 	
-	
 	// global object holding all data about the current user's session
 	var session = {
 		"tags": {},
@@ -58,33 +57,34 @@ $(function(){
 	
 	// upload an OPML file
 	$('button#upload-opml').click(function(e){
-		// reset the progress counter before we start
-		$.get("/fugr/opml-progress?reset=1");
-		
-		// when the file field is changed submit this thing automatically
+		// when the file field is changed
 		$("#opml-upload-frame").contents().find('input[type=file]').change(function() {
+			// reset the progress counter before we start
+			$.get("/fugr/opml-progress?reset=1");
+			
+			// when the frame has finished loading we want to know about it
+			function post_frame_loaded() {
+				// find the word 'true' in the frame
+				if ($("#opml-upload-frame").contents().text().indexOf("true") != -1) {
+					// reload the page
+					document.location.href = "/";
+				}
+			}
+			$("#opml-upload-frame").load(post_frame_loaded);
+			$("#opml-upload-frame").ready(post_frame_loaded);
+			
+			// show the progress bar and update it continuously
+			var progress = $('<div></div>').progressbar();
+			var progress_message = $('<p></p>');
+			var dialog = $('<div title="OPML Upload"></div>').append(progress_message).append(progress).dialog({"width": Math.max(300, $(window).width() / 3)});
+			check_opml_progress(dialog, progress, progress_message);
+			
+			// do the submit
 			$("#opml-upload-frame").contents().find("form#opml-upload").submit();
 		});
 		
-		// when the frame has finished loading we want to know about it
-		function post_frame_loaded() {
-			// find the word 'true' in the frame
-			if ($("#opml-upload-frame").contents().text().indexOf("true") != -1) {
-				// reload the page
-				document.location.href = "/";
-			}
-		}
-		$("#opml-upload-frame").load(post_frame_loaded);
-		$("#opml-upload-frame").ready(post_frame_loaded);
-		
 		// trigger a click so that the user can choose a file
 		$("#opml-upload-frame").contents().find("input#opml-upload").trigger("click");
-		
-		// show the progress bar and update it continuously
-		var progress = $('<div></div>').progressbar();
-		var progress_message = $('<p></p>');
-		var dialog = $('<div title="OPML Upload"></div>').append(progress_message).append(progress).dialog();
-		check_opml_progress(dialog, progress, progress_message);
 	});
 		
 	// different types of update we can register with the server

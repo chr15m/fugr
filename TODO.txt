@@ -1,4 +1,6 @@
  * font - Maven Pro? Ubuntu? or http://practicefoundry.com/collator.html?
+ * unread counts on feeds
+ * refactor progress code to use cache instead of database (maybe?)
  * Display read feeds differently
  * Ability to change feed tags
  * fix the mini spinner (gif transparency sucks)

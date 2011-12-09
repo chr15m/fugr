@@ -86,9 +86,13 @@ $(function(){
 		// trigger a click so that the user can choose a file
 		$("#opml-upload-frame").contents().find("input#opml-upload").trigger("click");
 	});
-		
+	
 	// different types of update we can register with the server
-	update_types = ["like", "star", "read"];
+	update_types = {
+		"like": ['Like this article', "heart"],
+		"star": ['Star this article', "star"],
+		"read": ['Read/Unread article', "check"]
+	};
 	
 	// updates an entry with the user action (e.g. mark read, like, star)
 	function update_entry(which, entry, update_type, forcevalue) {
@@ -165,31 +169,27 @@ $(function(){
 						// get the entry data for this element
 						var entry = feed_json.entries[parseInt(dest.attr("entry_id"))];
 						if (entry) {
-							// TODO: refactor this - bleh! use an array ["like", "read", "star] or associative array
-							var likebutton = $("<button class='ui-widget ui-button like-button' title='Like this article'><span class='ui-icon ui-icon-heart'></span></button>").button().click(function(){ update_entry(this, entry, "like"); });
-							if (entry.like != null) {
-								likebutton.addClass("ui-state-highlight");
-								likebutton.removeClass("ui-state-default");
+							var buttons = $("<div class='feedbuttons'></div>");
+							for (t in update_types) {
+								function make_update_entry_function(which, entry_in, type) {
+									return function(){ update_entry(this, entry_in, type); }
+								}
+								var btnhtml = "<button class='ui-widget ui-button " + t + "-button' title='" + update_types[t][0] + "'><span class='ui-icon ui-icon-" + update_types[t][1] + "'></span></button>";
+								var btn = $(btnhtml).button().click(make_update_entry_function(this, entry, t));
+								if (entry[t] != null) {
+									btn.addClass("ui-state-highlight");
+									btn.removeClass("ui-state-default");
+								} else if (t == "read") {
+									// always mark this as read when we first read it if not already marked
+									update_entry(btn, entry, "read", true);
+								}
+								buttons.append(btn);
 							}
-							var starbutton = $("<button class='ui-widget ui-button star-button' title='Star this article'><span class='ui-icon ui-icon-star'></span></button>").button().click(function(){ update_entry(this, entry, "star"); });
-							if (entry.star != null) {
-								starbutton.addClass("ui-state-highlight");
-								starbutton.removeClass("ui-state-default");
-							}
-							var readbutton = $("<button class='ui-widget ui-button read-button' title='Mark this article as read'><span class='ui-icon ui-icon-check'></span></button>").button().click(function(){ update_entry(this, entry, "read"); });
-							if (entry.read != null) {
-								readbutton.addClass("ui-state-highlight");
-								readbutton.removeClass("ui-state-default");
-							} else {
-								// trigger the ajax call to mark as read
-								update_entry(readbutton, entry, "read", true);
-							}
+							
 							// add the button bar
-							var buttons = $("<div class='feedbuttons'></div>").append(starbutton).append(likebutton).append(readbutton);
-							var bar = $("<div class='feedinfo'>" + entry.updated + "</div>").prepend(buttons);
-							dest.html(bar)
+							dest.html($("<div class='feedinfo'>" + entry.updated_parsed + "</div>").prepend(buttons));
 							dest.append($("<div class='feedcontent-inner'>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : entry.summary) + "</div>"));
-							// TODO: make this work
+							// TODO: make this work - buttons along the bottom of the article too
 							// dest.append(bar.clone());
 							// scroll to the new entry
 							$('html, body').scrollTop(dest.prev().offset().top);

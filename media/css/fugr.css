@@ -97,8 +97,15 @@ h3.entry a {
 	color: #444444 !important;
 }
 
-h3.entry.read a {
+h3.entry.read-entry a {
 	color: #888888 !important;
+}
+
+h3.entry div.entry-summary {
+	font-size: 0.5em;
+	margin-left: 5em;
+	margin-top: -1em;
+	color: gray;
 }
 
 div.feedcontent {

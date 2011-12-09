@@ -1,9 +1,12 @@
- * font - Maven Pro? Ubuntu? or http://practicefoundry.com/collator.html?
- * unread counts on feeds
+ * font - Maven Pro
+ * marking something read should mark the whole entry read (and update display)
+ * Display read feeds as such
+ * Show header above spinner when loading feed
+ * Make the refresh button actually work
  * refactor progress code to use cache instead of database (maybe?)
- * Display read feeds differently
  * Ability to change feed tags
  * fix the mini spinner (gif transparency sucks)
+ * unread counts on feeds
  * Fix json encoding of struct_time
  * Add-feed-by-url interface working
  * Feedback tab

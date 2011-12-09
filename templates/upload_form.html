@@ -1,0 +1,6 @@
+<div id='upload-opml-interface'>
+	<form enctype="multipart/form-data" method='post' action="/fugr/opml-upload" id='opml-upload'>
+		{% csrf_token %}
+		<input id='opml-upload' name='opml-upload' type='file'/>
+	</form>
+</div>

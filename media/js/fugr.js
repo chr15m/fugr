@@ -43,17 +43,50 @@ $(function(){
 	$('button,input[type=submit]').button();
 	$('input').addClass('ui-widget');
 	
+	// continually hit the opml-progress URL to see how far through the upload/parse we are
+	function check_opml_progress(dialog, progress, progress_message) {
+		// launch the ajax request to check
+		$.get("/fugr/opml-progress", function(result) {
+			// update UI with what we now know
+			progress.progressbar({"value": result.value * 100});
+			var log = result.log.split("\n");
+			progress_message.text(log[log.length - 1]);
+			// keep checking
+			setTimeout(function() { check_opml_progress(dialog, progress, progress_message) }, 100);
+		}, "json");
+	}
+	
 	// upload an OPML file
 	$('button#upload-opml').click(function(e){
-		$('input#opml-upload').trigger("click");
+		// reset the progress counter before we start
+		$.get("/fugr/opml-progress?reset=1");
+		
+		// when the file field is changed submit this thing automatically
+		$("#opml-upload-frame").contents().find('input[type=file]').change(function() {
+			$("#opml-upload-frame").contents().find("form#opml-upload").submit();
+		});
+		
+		// when the frame has finished loading we want to know about it
+		function post_frame_loaded() {
+			// find the word 'true' in the frame
+			if ($("#opml-upload-frame").contents().text().indexOf("true") != -1) {
+				// reload the page
+				document.location.href = "/";
+			}
+		}
+		$("#opml-upload-frame").load(post_frame_loaded);
+		$("#opml-upload-frame").ready(post_frame_loaded);
+		
+		// trigger a click so that the user can choose a file
+		$("#opml-upload-frame").contents().find("input#opml-upload").trigger("click");
+		
+		// show the progress bar and update it continuously
+		var progress = $('<div></div>').progressbar();
+		var progress_message = $('<p></p>');
+		var dialog = $('<div title="OPML Upload"></div>').append(progress_message).append(progress).dialog();
+		check_opml_progress(dialog, progress, progress_message);
 	});
-	
-	// when the file field is changed submit this thing automatically
-	$('input[type=file]').change(function() {
-		// TODO: progressbar feedback as we upload
-		$('form#opml-upload').submit();
-	});
-	
+		
 	// different types of update we can register with the server
 	update_types = ["like", "star", "read"];
 	

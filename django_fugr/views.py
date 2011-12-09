@@ -20,15 +20,24 @@ from models import Feed, FeedTag, UserFeed, Entry, UserEntry, OpmlProgress
 def index(request):
 	return direct_to_template(request, "index.html", {"username": json_encode(request.user)})
 
-############### OPML UPLOAD ###############
+############### JSON API CALLS ###############
+
+def json_api(fn):
+	def newfunc(request, *args, **kwargs):
+		return HttpResponse(json_encode(fn(request, *args, **kwargs)), mimetype="text/plain")
+	return newfunc
+
+### OPML UPLOAD ###
 
 @login_required
+@json_api
 def opml_upload(request):
 	progress, created = OpmlProgress.objects.get_or_create(user=request.user)
 	def opml_progress(progress, value, msg):
 		progress.value = value
-		progress.log += msg + "\n"
+		progress.log += "\n" + msg
 		progress.save()
+	opml_progress(progress, 0, "OPML Importing...")
 	uploaded = request.FILES.get('opml-upload')
 	if uploaded:
 		opmldata = parse_opml(uploaded.read())
@@ -39,7 +48,6 @@ def opml_upload(request):
                 #                            'labels': set([u'bitcoin',
                 #                                           u'economics']),
                 #                            'title': u'Bitcoin Morpheus'},
-		opml_progress(progress, 0, "OPML data parsed")
 		opml_count = 0.0
 		# go through every feed creating the stuff
 		for feed_url in opmldata:
@@ -60,14 +68,10 @@ def opml_upload(request):
 			# increment the progress counter
 			opml_count += 1
 			opml_progress(progress, opml_count / len(opmldata), u'Added feed: ' + unicode(feed))
-	return HttpResponseRedirect(reverse("index"))
-
-############### JSON API CALLS ###############
-
-def json_api(fn):
-	def newfunc(request, *args, **kwargs):
-		return HttpResponse(json_encode(fn(request, *args, **kwargs)), mimetype="text/plain")
-	return newfunc
+		opml_progress(progress, 1, u'OPML Import complete')
+		return True
+	else:
+		return False
 
 ### OPML progress ###
 
@@ -75,6 +79,11 @@ def json_api(fn):
 @json_api
 def opml_progress(request):
 	""" Tell the user where their OPML upload is up to. """
+	if request.GET.get("reset", None):
+		progress, created = OpmlProgress.objects.get_or_create(user=request.user)
+		progress.value = 0
+		progress.log = ""
+		progress.save()
 	progress, created = OpmlProgress.objects.get_or_create(user=request.user)
 	return {"value": progress.value, "log": progress.log}
 

@@ -1,8 +1,7 @@
  * font - Maven Pro? Ubuntu? or http://practicefoundry.com/collator.html?
-
+ * Display read feeds differently
  * Ability to change feed tags
-
- * Progress bar for OPML upload
+ * fix the mini spinner (gif transparency sucks)
  * Fix json encoding of struct_time
  * Add-feed-by-url interface working
  * Feedback tab
@@ -17,7 +16,7 @@
 
  * Clone Reader usability
    * 'All items' is default view
-   * history management (back button should work)
+   * history management (browser back button should work)
    * reload button on every page
    * drop-down: show all/show new - sort by newest/oldest/magic - search - mark all as read
    * Every tag/feed has a total unread count next to it
@@ -58,4 +57,5 @@ Done
     print d.feed.link
     print d['items'][1].title
  + Feed caching
+ + Progress bar for OPML upload
 

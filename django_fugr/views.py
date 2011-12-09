@@ -93,10 +93,9 @@ def opml_progress(request):
 @json_api
 def update_entry(request, update_type, value, uid):
 	# star, like, read
-	#e = get_object_or_404(UserEntry, entry__uid=uid, user=request.user)
 	e = get_object_or_404(Entry, uid=uid)
 	ue, created = UserEntry.objects.get_or_create(entry=e, user=request.user)
-	if update_type in ("read", "like", "start"):
+	if update_type in ("read", "like", "star"):
 		if value == "true":
 			setattr(ue, update_type, datetime.now())
 		elif value == "false":

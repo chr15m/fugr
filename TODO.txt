@@ -1,7 +1,10 @@
  * font - Maven Pro
  * pagination - more items
+ * make external links open in a new window (e.g. feed header).
  * Show header above spinner when loading feed
  * Make the refresh button actually work
+ * get buttons in the bottom of the entry display as well as the top
+ * If images are larger than width of page, shrink them with jQuery
  * refactor progress code to use cache instead of database (maybe?)
  * Ability to change feed tags
  * fix the mini spinner (gif transparency sucks)
@@ -14,6 +17,12 @@
    * About link in the about bar (dialog popup)
    * Source code link in the about bar
    * Feature request link in the about bar
+ * client-side cache using HTML5 local storage
+   * always hit the cache first if available
+   * show a spinner still
+   * wait for the data to come back from the server (if ever)
+ * remember last view in cookie/session/user (user? works across devices)
+ * put permalink to actual article
 
  * Donate button somewhere.
  * Ads?
@@ -29,11 +38,12 @@
      * top entry is the feed itself with the aggregated view
      * back button at top left says 'back'
      * entries indented slightly (except top one)
-   * tags have a folder icon next to them
-   * feeds have an rss icon next to them
-   * when you click a feed - loading spinner (so that's ok) - feed features:
-     * back button at the top says 'feeds'
-     * top: collapse/expand (expand loads basically instantly - but not images - keep HTML but do not insert it yet)
+   + tags have a folder icon next to them
+   + feeds have an rss icon next to them
+   + when you click a feed - loading spinner (so that's ok)
+   * feed view features:
+     + back button at the top says 'feeds'
+     + top: collapse/expand (expand loads basically instantly - but not images - keep HTML but do not insert it yet)
      * top: next item button
      * top: star
      * bottom: star

@@ -1,14 +1,14 @@
  * font - Maven Pro
- * marking something read should mark the whole entry read (and update display)
- * Display read feeds as such
+ * pagination - more items
  * Show header above spinner when loading feed
  * Make the refresh button actually work
  * refactor progress code to use cache instead of database (maybe?)
  * Ability to change feed tags
  * fix the mini spinner (gif transparency sucks)
- * unread counts on feeds
  * Fix json encoding of struct_time
- * Add-feed-by-url interface working
+ * unread counts on feeds
+ * Add-feed-by-url interface working (if non-feed URL, shows feeds from that url to select from)
+ * About button on home page
  * Feedback tab
  * Logo in the top right - hovering shows the about bar
    * About link in the about bar (dialog popup)
@@ -63,4 +63,6 @@ Done
     print d['items'][1].title
  + Feed caching
  + Progress bar for OPML upload
+ + marking something read should mark the whole entry read (and update display)
+ + Display read feeds as such
 

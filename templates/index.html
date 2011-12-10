@@ -8,8 +8,8 @@
 	<div id="main-tabs" class='tabs'>
 		<ul>
 			<li><a href="#tab-read">Read</a></li>
-			<li><a href="#tab-feeds">Feeds</a></li>
-			<li><a href="#tab-comments">Comments</a></li>
+			<li><a href="#tab-feeds">Settings</a></li>
+			<!-- <li><a href="#tab-comments">Comments</a></li> -->
 		</ul>
 		<div id="tab-read">
 			<img src='/media/img/loader.gif' id='loader'/>
@@ -18,8 +18,8 @@
 			<div id='add-subscription-interface'><input name='feed-url' id='feed-url' class='ui-widget'/> <button class='ui-widget'>Add feed URL</button> or <button id='upload-opml'>Upload OPML</button></div>
 			<iframe id='opml-upload-frame' src='{% url upload_form %}' style='display: none;'></iframe>
 		</div>
-		<div id="tab-comments">
+		<!-- <div id="tab-comments">
 			Friending, sharing, comments are not yet implemented.
-		</div>
+		</div> -->
 	</div>
 {% endblock %}

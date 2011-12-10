@@ -2,6 +2,11 @@
 
 import os
 
+try:
+	from bzrlib.workingtree import WorkingTree
+except ImportError:
+	WorkingTree = None
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -182,6 +187,13 @@ CACHES = {
 		}
 	}
 }
+
+# use the bzr revision number to invalidate the cache (if available)
+if not WorkingTree is None:
+	try:
+		CACHES["default"]["OPTIONS"]["VERSION"] = WorkingTree.open(PROJECT_ROOT).branch.last_revision_info()[0]
+	except:
+		pass
 
 if os.path.isfile(os.path.join(PROJECT_ROOT, "settings_local.py")):
 	from settings_local import *

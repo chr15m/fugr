@@ -222,6 +222,7 @@ $(function(){
 		// add the link to summary feeds
 		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>" + tagname + " - All</div>").click(make_load_func("/feeds/" + session.username + "/" + tagname)));
 		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>" + tagname + " - Interesting</div>").click(make_load_func("/feeds/" + session.username + "/interesting/" + tagname)));
+		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>" + tagname + " - Popular</div>").click(make_load_func("/feeds/" + session.username + "/popular/" + tagname)));
 		var tagfeeds = session.tags[tagname];
 		// now put the feeds in there
 		if (typeof tagfeeds != "undefined") {
@@ -243,7 +244,7 @@ $(function(){
 		// empty the area
 		set_header("All Tags", false);
 		// default 'tag' links
-		$("div#tab-read").append($("<div class='feedtag-link feedlist'>All Items</div>"));
+		$("div#tab-read").append($("<div class='feedtag-link feedlist'>Firehose</div>"));
 		$("div#tab-read").append($("<div class='feedtag-link feedlist'>Read Items</div>"));
 		$("div#tab-read").append($("<div class='feedtag-link feedlist'>Liked Items</div>"));
 		$("div#tab-read").append($("<div class='feedtag-link feedlist'>Starred Items</div>"));

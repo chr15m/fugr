@@ -69,6 +69,8 @@ def opml_upload(request):
 			opml_count += 1
 			opml_progress(request.user, opml_count / len(opmldata), u'Added feed: ' + unicode(feed))
 		opml_progress(request.user, 1, u'OPML Import complete')
+		# invalidate the feeds cache
+		cache.set(request.user.username + "-feeds", None)
 		return True
 	else:
 		return False
@@ -105,12 +107,18 @@ def update_entry(request, update_type, value, uid):
 @json_api
 def feeds(request):
 	""" Returns the data object representing this user's feeds. """
-	return dict([(uf.feed.url, {"pk": uf.feed.pk, "blog_url": uf.feed.blog_url, "title": uf.feed.title, "tags": [t.tag for t in uf.tags.all()]}) for uf in UserFeed.objects.filter(user=request.user)])
+	cachekey = request.user.username + "-feeds"
+	feeds = cache.get(cachekey, None)
+	if not feeds:
+		feeds = dict([(uf.feed.url, {"pk": uf.feed.pk, "blog_url": uf.feed.blog_url, "title": uf.feed.title, "tags": [t.tag for t in uf.tags.all()]}) for uf in UserFeed.objects.filter(user=request.user)])
+		cache.set(cachekey, feeds)
+	return feeds
 
 @login_required
 @json_api
 def feed(request, feed_url):
 	""" Returns the contents of a feed. """
+	# TODO: cache a feed a short time in case the user hits it again soon
 	# is this a special internal constructed feed (e.g. aggregation or 'interesting')
 	if feed_url.startswith("/feed"):
 		pass

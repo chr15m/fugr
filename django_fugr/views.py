@@ -6,7 +6,7 @@ from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.core.cache import cache
@@ -89,7 +89,10 @@ def opml_progress(request):
 
 @login_required
 @json_api
-def update_entry(request, update_type, value, uid):
+def update_entry(request, update_type, value):
+	uid = request.GET.get("uid", None)
+	if not uid:
+		raise Http404("Missing UID.")
 	# star, like, read
 	e = get_object_or_404(Entry, uid=uid)
 	ue, created = UserEntry.objects.get_or_create(entry=e, user=request.user)
@@ -116,8 +119,11 @@ def feeds(request):
 
 @login_required
 @json_api
-def feed(request, feed_url):
+def feed(request):
 	""" Returns the contents of a feed. """
+	feed_url = request.GET.get("url", None)
+	if not feed_url:
+		raise Http404("Missing feed URL.")
 	# TODO: cache a feed a short time in case the user hits it again soon
 	# is this a special internal constructed feed (e.g. aggregation or 'interesting')
 	if feed_url.startswith("/feed"):

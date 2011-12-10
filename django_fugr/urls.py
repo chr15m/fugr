@@ -10,9 +10,9 @@ urlpatterns = patterns('',
 	url(r'^opml-upload$', 'django_fugr.views.opml_upload', name='opml_upload'),
 	url(r'^opml-progress$', 'django_fugr.views.opml_progress', name='opml_progress'),
 	# user actions
-	url(r'^update-entry/(?P<update_type>read|like|star)/(?P<value>true|false)/(?P<uid>.*)$', 'django_fugr.views.update_entry', name='update_entry'),
+	url(r'^update-entry/(?P<update_type>read|like|star)/(?P<value>true|false)$', 'django_fugr.views.update_entry', name='update_entry'),
 	
 	# JSON API
 	url(r'^json/feeds$', 'django_fugr.views.feeds', name='json_feeds'),
-	url(r'^json/feed/(?P<feed_url>.*)$', 'django_fugr.views.feed', name='json_feed'),
+	url(r'^json/feed$', 'django_fugr.views.feed', name='json_feed'),
 )

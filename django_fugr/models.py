@@ -144,8 +144,3 @@ class UserEntry(models.Model):
 	star = models.DateTimeField(null=True, blank=True)
 	interest = models.FloatField(default=0)
 
-class OpmlProgress(models.Model):
-	user = models.ForeignKey(User)
-	value = models.FloatField(default=0)
-	log = models.TextField(default="")
-

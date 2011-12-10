@@ -98,7 +98,11 @@ h3.entry a {
 }
 
 h3.entry.read-entry a {
-	color: #888888 !important;
+	color: #aaaaaa !important;
+}
+
+h3.entry.read-entry {
+	background: #eeeeff;
 }
 
 h3.entry div.entry-summary {

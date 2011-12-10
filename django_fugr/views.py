@@ -14,7 +14,7 @@ from django.core.cache import cache
 from parse_opml import parse_opml
 from json_encode import json_encode
 
-from models import Feed, FeedTag, UserFeed, Entry, UserEntry, OpmlProgress
+from models import Feed, FeedTag, UserFeed, Entry, UserEntry
 
 @login_required
 def index(request):
@@ -32,12 +32,12 @@ def json_api(fn):
 @login_required
 @json_api
 def opml_upload(request):
-	progress, created = OpmlProgress.objects.get_or_create(user=request.user)
-	def opml_progress(progress, value, msg):
-		progress.value = value
-		progress.log += "\n" + msg
-		progress.save()
-	opml_progress(progress, 0, "OPML Importing...")
+	def opml_progress(user, value, msg):
+		progress = cache.get(user.username + "-opml-progress", {"value": 0, "log": ""})
+		progress["value"] = value
+		progress["log"] += "\n" + msg
+		cache.set(user.username + "-opml-progress", progress)
+	opml_progress(request.user, 0, "OPML Importing...")
 	uploaded = request.FILES.get('opml-upload')
 	if uploaded:
 		opmldata = parse_opml(uploaded.read())
@@ -57,7 +57,7 @@ def opml_upload(request):
 				tagobject, created = FeedTag.objects.get_or_create(tag=tag)
 				tags.append(tagobject)
 				tagobject.save()
-				opml_progress(progress, opml_count / len(opmldata), u'Added tag: ' + unicode(tagobject))
+				opml_progress(request.user, opml_count / len(opmldata), u'Added tag: ' + unicode(tagobject))
 			# get or create the feed
 			feed, created = Feed.objects.get_or_create(url=feed_url, title=opmldata[feed_url]["title"], blog_url=opmldata[feed_url]["blog_url"])
 			feed.save()
@@ -67,8 +67,8 @@ def opml_upload(request):
 			uf.save()
 			# increment the progress counter
 			opml_count += 1
-			opml_progress(progress, opml_count / len(opmldata), u'Added feed: ' + unicode(feed))
-		opml_progress(progress, 1, u'OPML Import complete')
+			opml_progress(request.user, opml_count / len(opmldata), u'Added feed: ' + unicode(feed))
+		opml_progress(request.user, 1, u'OPML Import complete')
 		return True
 	else:
 		return False
@@ -80,12 +80,8 @@ def opml_upload(request):
 def opml_progress(request):
 	""" Tell the user where their OPML upload is up to. """
 	if request.GET.get("reset", None):
-		progress, created = OpmlProgress.objects.get_or_create(user=request.user)
-		progress.value = 0
-		progress.log = ""
-		progress.save()
-	progress, created = OpmlProgress.objects.get_or_create(user=request.user)
-	return {"value": progress.value, "log": progress.log}
+		cache.set(request.user.username + "-opml-progress", {"value": 0, "log": ""})
+	return cache.get(request.user.username + "-opml-progress", {"value": 0, "log": ""})
 
 ### User actions ###
 

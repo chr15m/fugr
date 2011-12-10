@@ -95,7 +95,7 @@ $(function(){
 	};
 	
 	// updates an entry with the user action (e.g. mark read, like, star)
-	function update_entry(which, entry, update_type, forcevalue) {
+	function update_entry(which, entry, update_type, header_element, forcevalue) {
 		// URL = /update_type/value/uid
 		// which = originating element
 		// update_type = "read", "like", "star"
@@ -127,9 +127,15 @@ $(function(){
 				if (result["fields"][update_type] == null) {
 					$(which).removeClass("ui-state-highlight");
 					$(which).addClass("ui-state-default");
+					if (update_type == "read") {
+						$(header_element).removeClass("read-entry");
+					}
 				} else {
 					$(which).removeClass("ui-state-default");
 					$(which).addClass("ui-state-highlight");
+					if (update_type == "read") {
+						$(header_element).addClass("read-entry");
+					}
 				}
 				inner.css({"background-image": ""});
 			}
@@ -166,23 +172,23 @@ $(function(){
 					"clearStyle": true,
 					"active": false,
 					"change": function(ev, ui) {
-						var dest = $(ui.newContent)
+						var dest = $(ui.newContent);
 						// get the entry data for this element
 						var entry = feed_json.entries[parseInt(dest.attr("entry_id"))];
 						if (entry) {
 							var buttons = $("<div class='feedbuttons'></div>");
 							for (t in update_types) {
-								function make_update_entry_function(which, entry_in, type) {
-									return function(){ update_entry(this, entry_in, type); }
+								function make_update_entry_function(which, entry_in, type, header_element) {
+									return function(){ update_entry(this, entry_in, type, header_element); }
 								}
 								var btnhtml = "<button class='ui-widget ui-button " + t + "-button' title='" + update_types[t][0] + "'><span class='ui-icon ui-icon-" + update_types[t][1] + "'></span></button>";
-								var btn = $(btnhtml).button().click(make_update_entry_function(this, entry, t));
+								var btn = $(btnhtml).button().click(make_update_entry_function(this, entry, t, ui.newHeader));
 								if (entry[t] != null) {
 									btn.addClass("ui-state-highlight");
 									btn.removeClass("ui-state-default");
 								} else if (t == "read") {
 									// always mark this as read when we first read it if not already marked
-									update_entry(btn, entry, "read", true);
+									update_entry(btn, entry, "read", ui.newHeader, true);
 								}
 								buttons.append(btn);
 							}

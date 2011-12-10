@@ -120,7 +120,7 @@ $(function(){
 		var uid = entry.id;
 		//console.log(value, uid);
 		// send ajax request
-		$.get("/fugr/update-entry/" + update_type + "/" + value + "/" + escape(uid), function(result) {
+		$.get("/fugr/update-entry/" + update_type + "/" + value + "/" + encodeURIComponent(uid), function(result) {
 			if (result["fields"]) {
 				// stop the spinner from happening
 				spinner.remove();
@@ -147,7 +147,7 @@ $(function(){
 	function load_feed(feed, backfunc) {
 		// show spinner while we load
 		show_spinner();
-		$.get("/fugr/json/feed/" + escape(feed.url),
+		$.get("/fugr/json/feed/" + encodeURIComponent(feed.url),
 			function(feed_json) {
 				session.current_feed = feed_json;
 				set_header("<a href='" + feed_json.feed.link + "'>" + feed_json.feed.title + "</a>", backfunc);

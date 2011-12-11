@@ -162,7 +162,7 @@ $(function(){
 					// TODO: if there are multiple content parts show them all
 					// TODO: check if content parts are some other mimetype like mp3 or whatever
 					// strip HTML from summary -> http://robertnyman.com/roblab/javascript-remove-tags.htm
-					var entryheader = $("<h3 class='entry" + (entry.read == null ? "" : " read-entry") + "'><a href='#'>" + entry.title + "</a><div class='entry-summary'>" + entry.summary.replace(/<\/?[^>]+(>|$)/g, "").substr(0, 100) + "...</div></h3><div class='feedcontent' entry_id='" + i + "'></div>");
+					var entryheader = $("<h3 class='entry" + (entry.read == null ? "" : " read-entry") + "'><a href='#'>" + entry.title + "</a><div class='entry-summary'>" + (typeof(entry.summary) != "undefined" ? entry.summary : (typeof(entry.content) != "undefined" ? entry.content[0].value : "")).replace(/<\/?[^>]+(>|$)/g, "").substr(0, 100) + "...</div></h3><div class='feedcontent' entry_id='" + i + "'></div>");
 					feedcontainer.append(entryheader);
 				}
 				$('div#tab-read').append(feedcontainer);
@@ -195,7 +195,7 @@ $(function(){
 							
 							// add the button bar
 							dest.html($("<div class='feedinfo'>" + entry.updated_parsed + "</div>").prepend(buttons));
-							dest.append($("<div class='feedcontent-inner'>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : entry.summary) + "</div>"));
+							dest.append($("<div class='feedcontent-inner'>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : (typeof(entry.summary) != "undefined" ? entry.summary : "")) + "</div>"));
 							// TODO: make this work - buttons along the bottom of the article too
 							// dest.append(bar.clone());
 							// scroll to the new entry

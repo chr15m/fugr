@@ -1,6 +1,8 @@
  * font - Maven Pro
  * pagination - more items
+ * After filling the screen jump to the top (or the last scroll position for that screen?)
  * make external links open in a new window (e.g. feed header).
+ * javascript snippet for subscribing to a page
  * Show header above spinner when loading feed
  * Make the refresh button actually work
  * get buttons in the bottom of the entry display as well as the top

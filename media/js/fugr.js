@@ -149,6 +149,10 @@ $(function(){
 		show_spinner();
 		$.get("/fugr/json/feed?url=" + encodeURIComponent(feed_url),
 			function(feed_json) {
+				if (feed_json == null) {
+					// fake it
+					feed_json = {"feed": {"link": "", "title": "No data"}, "entries": []};
+				}
 				session.current_feed = feed_json;
 				set_header("<a href='" + feed_json.feed.link + "'>" + feed_json.feed.title + "</a>", backfunc);
 				var feedcontainer = $("<div></div>");

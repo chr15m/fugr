@@ -144,10 +144,10 @@ $(function(){
 	}
 	
 	// loads a particular feed into the read area
-	function load_feed(feed, backfunc) {
+	function populate_read_tab_with_feed(feed_url, backfunc) {
 		// show spinner while we load
 		show_spinner();
-		$.get("/fugr/json/feed?url=" + encodeURIComponent(feed.url),
+		$.get("/fugr/json/feed?url=" + encodeURIComponent(feed_url),
 			function(feed_json) {
 				session.current_feed = feed_json;
 				set_header("<a href='" + feed_json.feed.link + "'>" + feed_json.feed.title + "</a>", backfunc);
@@ -203,10 +203,10 @@ $(function(){
 						}
 					}
 				});
+				window.scrollTo(0,1);
 			},
 			"json"
 		);
-
 	}
 	
 	// populates the read tab with this tag's feeds
@@ -216,11 +216,11 @@ $(function(){
 		// function factory to load the feed
 		function make_load_func(feed) {
 			return function(e) {
-				load_feed(feed, function() { populate_read_tab_with_feeds(tagname, backfunc); });
+				populate_read_tab_with_feed(feed, function() { populate_read_tab_with_feeds(tagname, backfunc); });
 			}
 		}
 		// add the link to summary feeds
-		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>" + tagname + " - All</div>").click(make_load_func("/feeds/" + session.username + "/" + tagname)));
+		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>" + tagname + " - All</div>").click(make_load_func("/feeds/" + session.username + "/all/" + tagname)));
 		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>" + tagname + " - Interesting</div>").click(make_load_func("/feeds/" + session.username + "/interesting/" + tagname)));
 		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>" + tagname + " - Popular</div>").click(make_load_func("/feeds/" + session.username + "/popular/" + tagname)));
 		var tagfeeds = session.tags[tagname];
@@ -228,15 +228,14 @@ $(function(){
 		if (typeof tagfeeds != "undefined") {
 			for (var f=0; f<tagfeeds.length; f++) {
 				$("div#tab-read").append(
-					$("<div class='feed-link feedlist'>" + tagfeeds[f].title + "</div>").click(make_load_func(tagfeeds[f]))
+					$("<div class='feed-link feedlist'>" + tagfeeds[f].title + "</div>").click(make_load_func(tagfeeds[f].url))
 				);
 			}
 		}
 		// add the folder icons
 		$("div.feed-link").addClass("ui-state-default");
 		$("div.feed-link").prepend("<span class='ui-icon ui-icon-signal-diag'></span>");
-		// make them clickable
-		$("div.feed-link");
+		window.scrollTo(0,1);
 	}
 	
 	// populates the read tab with this user's tags
@@ -266,6 +265,7 @@ $(function(){
 		$("div.feedtag-link").click(function(e) {
 			populate_read_tab_with_feeds($(this).text(), function() { populate_read_tab_with_tags(tags); });
 		});
+		window.scrollTo(0,1);
 	}
 	
 	function add_feed_to_tag(feed_url, data, tagname) {

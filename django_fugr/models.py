@@ -78,7 +78,7 @@ class FeedData(models.Model):
 						pass
 						# malformed entry, not really sure what to do
 		else:
-			print url, "Feed did not return a valid status"
+			print url, "Feed did not return a valid status (might be 'not modified')"
 		self.last_update = datetime.now()
 		self.save()
 	
@@ -143,4 +143,3 @@ class UserEntry(models.Model):
 	like = models.DateTimeField(null=True, blank=True)
 	star = models.DateTimeField(null=True, blank=True)
 	interest = models.FloatField(default=0)
-

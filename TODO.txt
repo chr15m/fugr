@@ -1,5 +1,7 @@
  * font - Maven Pro
  * pagination - more items
+ * "mark all as read" button
+ * show items older than 30 days as read
  * After filling the screen jump to the top (or the last scroll position for that screen?)
  * make external links open in a new window (e.g. feed header).
  * javascript snippet for subscribing to a page

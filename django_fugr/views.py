@@ -15,14 +15,17 @@ from parse_opml import parse_opml
 from json_encode import json_encode
 
 from models import Feed, FeedTag, UserFeed, Entry, UserEntry
+from feeds import generate_internal_feed
 
 @login_required
 def index(request):
+	""" Our one and only static page. Well, apart from the OPML form. """
 	return direct_to_template(request, "index.html", {"username": json_encode(request.user)})
 
 ############### JSON API CALLS ###############
 
 def json_api(fn):
+	""" Wrapper to turn any function into one that acts as a JSON API endpoint. """
 	def newfunc(request, *args, **kwargs):
 		return HttpResponse(json_encode(fn(request, *args, **kwargs)), mimetype="text/plain")
 	return newfunc
@@ -32,6 +35,7 @@ def json_api(fn):
 @login_required
 @json_api
 def opml_upload(request):
+	""" Does what it says on the box - interface where user can post OPML data to have it inserted into the system. """
 	def opml_progress(user, value, msg):
 		progress = cache.get(user.username + "-opml-progress", {"value": 0, "log": ""})
 		progress["value"] = value
@@ -90,6 +94,7 @@ def opml_progress(request):
 @login_required
 @json_api
 def update_entry(request, update_type, value):
+	""" API to let the user modify a particular entry by star/like/read/unread etc. """
 	uid = request.GET.get("uid", None)
 	if not uid:
 		raise Http404("Missing UID.")
@@ -109,9 +114,10 @@ def update_entry(request, update_type, value):
 @login_required
 @json_api
 def feeds(request):
-	""" Returns the data object representing this user's feeds. """
+	""" Returns the data object representing this user's feeds (metadata of all feeds, no actual entries data). """
 	cachekey = request.user.username + "-feeds"
 	feeds = cache.get(cachekey, None)
+	# fetch the user's feed data from the cache if present, or fetch them fresh
 	if not feeds:
 		feeds = dict([(uf.feed.url, {"pk": uf.feed.pk, "blog_url": uf.feed.blog_url, "title": uf.feed.title, "tags": [t.tag for t in uf.tags.all()]}) for uf in UserFeed.objects.filter(user=request.user)])
 		cache.set(cachekey, feeds)
@@ -126,9 +132,10 @@ def feed(request):
 		raise Http404("Missing feed URL.")
 	# TODO: cache a feed a short time in case the user hits it again soon
 	# is this a special internal constructed feed (e.g. aggregation or 'interesting')
-	if feed_url.startswith("/feed"):
-		pass
+	if feed_url.startswith("/feeds"):
+		return generate_internal_feed(request, *feed_url.split("/")[2:])
 	else:
 		# TODO: hmm, shouldn't bother un-encoding and re-encoding this json object like this - probably expensive
+		# this is just a regular feed we have cached previously from somewhere on the net
 		return get_object_or_404(UserFeed, user=request.user, feed__url=feed_url).feed.feeddata.get_cached_feed(request.user)
 

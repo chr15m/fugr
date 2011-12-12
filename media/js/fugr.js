@@ -199,7 +199,18 @@ $(function(){
 							
 							// add the button bar
 							dest.html($("<div class='feedinfo'>" + entry.updated_parsed + "<br/></div>").prepend(buttons));
-							dest.append($("<div class='feedcontent-inner'><div class='original-link'><a href='" + entry.link + "' target='_new'>original</a></div>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : (typeof(entry.summary) != "undefined" ? entry.summary : "")) + "</div>"));
+							var content = $("<div class='feedcontent-inner'><div class='original-link'><a href='" + entry.link + "' target='_new'>original</a></div>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : (typeof(entry.summary) != "undefined" ? entry.summary : "")) + "</div>");
+							// once the images load, make sure they fit the screen
+							content.find("img").load(function(ev) {
+								if ($(this).width() > content.width()) {
+									// HACK - TODO: fix this to account for margins
+									// TODO: re-do this on resize event
+									var ratio = 1.0 * $(this).width() / $(this).height();
+									$(this).width(content.width() * .97);
+									$(this).height(content.width() * .97 / ratio);
+								}
+							});
+							dest.append(content);
 							// TODO: make this work - buttons along the bottom of the article too
 							// dest.append(bar.clone());
 							// scroll to the new entry

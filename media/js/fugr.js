@@ -198,8 +198,8 @@ $(function(){
 							}
 							
 							// add the button bar
-							dest.html($("<div class='feedinfo'>" + entry.updated_parsed + "</div>").prepend(buttons));
-							dest.append($("<div class='feedcontent-inner'>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : (typeof(entry.summary) != "undefined" ? entry.summary : "")) + "</div>"));
+							dest.html($("<div class='feedinfo'>" + entry.updated_parsed + "<br/></div>").prepend(buttons));
+							dest.append($("<div class='feedcontent-inner'><div class='original-link'><a href='" + entry.link + "' target='_new'>original</a></div>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : (typeof(entry.summary) != "undefined" ? entry.summary : "")) + "</div>"));
 							// TODO: make this work - buttons along the bottom of the article too
 							// dest.append(bar.clone());
 							// scroll to the new entry

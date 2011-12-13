@@ -90,7 +90,7 @@ class FeedData(models.Model):
 			self.update_feed()
 		feed = pickle.loads(base64.decodestring(self.parsed))
 		# add the entries with the user data for this user
-		feed.entries = [e.entry_for_user(user) for e in self.feed.entry_set.all()[:settings.FEED_ITEMS_PER_REQUEST]]
+		feed.entries = [e.entry_for_user(user) for e in self.feed.entry_set.all().order_by("-date")[:settings.FEED_ITEMS_PER_REQUEST]]
 		return feed
 	
 	def __unicode__(self):

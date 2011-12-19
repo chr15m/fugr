@@ -1,5 +1,7 @@
+ * Alter the client-cached entry datastructure after doing ajax request
+ * Justify article text
  * font - Maven Pro
- * pagination - more items
+ * pagination - more items button at the bottom of the feed (if more are available)
  * "mark all as read" button
  * show items older than 30 days as read
  * After filling the screen jump to the top (or the last scroll position for that screen?)

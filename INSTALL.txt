@@ -1,5 +1,4 @@
-
-Where does the name come from?
+What does the name mean?
 
 	fugue-er - one who enjoys a good fugue or a good fugue-ing
 	
@@ -9,7 +8,7 @@ Dependencies
 ------------
 
 Django (1.3)
-python-feedparser (5.0.1)
+python-feedparser (> 5.0.1)
 
 Apache config
 -------------

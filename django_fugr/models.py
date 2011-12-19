@@ -48,7 +48,7 @@ class FeedData(models.Model):
 				# TODO: handle other statuses like redirect?
 				# store the etag and modified fields to not re-request unchanged feeds next time
 				self.etag = getattr(parsed, "etag", None)
-				modified = getattr(parsed, "modified", None)
+				modified = getattr(parsed, "modified_parsed", None)
 				self.last_modified = modified and datetime(*modified[:6]) or None
 				# make sure we have the latest title from the feed itself
 				self.feed.title = getattr(parsed.feed, "title", self.feed.title)

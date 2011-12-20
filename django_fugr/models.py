@@ -85,8 +85,8 @@ class FeedData(models.Model):
 	def get_cached_feed(self, user):
 		""" Unpickles and returns the cached version of the feedparser object. """
 		# check if we have a recent copy of this feed
-		if self.parsed is None or self.last_update < datetime.now() - timedelta(days=1) and self.feed:
-			# for whatever reason we don't have a recent copy of this feed
+		if self.feed and (self.parsed is None or self.last_update < datetime.now() - settings.MINIMUM_FEED_REFRESH_TIME):
+			# we don't have a recent copy of this feed to fetch it now
 			self.update_feed()
 		feed = pickle.loads(base64.decodestring(self.parsed))
 		# add the entries with the user data for this user

@@ -1,6 +1,7 @@
 # Django settings for fugr project.
 
 import os
+from datetime import timedelta
 
 try:
 	from bzrlib.workingtree import WorkingTree
@@ -177,6 +178,9 @@ SHOW_AS_READ_AFTER_X_DAYS = 30
 
 # how many feed items to fetch at a time
 FEED_ITEMS_PER_REQUEST = 20
+
+# do not refresh a feed faster than this (always wait this long between fetching again)
+MINIMUM_FEED_REFRESH_TIME = timedelta(minutes=15)
 
 # cached data
 CACHES = {

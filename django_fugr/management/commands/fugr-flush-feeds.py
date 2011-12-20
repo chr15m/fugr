@@ -8,7 +8,7 @@ from django_fugr.models import FeedData
 import settings
 
 class Command(NoArgsCommand):
-	help = 'Flush all cached data from fugr feeds (does not delete old entries).'
+	help = 'Flush all currently cached data from fugr feeds (does not delete old entries).'
 	def handle_noargs(self, *args, **kwargs):
 		for f in FeedData.objects.all():
 			print 'Resetting "%s" <%s>' % (f.feed.title, f.feed.blog_url)

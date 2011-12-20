@@ -5,7 +5,7 @@ from django_fugr.models import Feed
 
 class Command(BaseCommand):
     args = '<searchterm>'
-    help = 'Searches the feeds for a certain string'
+    help = 'Searches all feed titles, urls, etc. for a certain string and shows matching feed info.'
 
     def handle(self, *args, **options):
 	if len(args) == 1:

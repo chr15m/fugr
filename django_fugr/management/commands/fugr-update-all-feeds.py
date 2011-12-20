@@ -15,7 +15,7 @@ def do_update(f):
 		return
 
 class Command(NoArgsCommand):
-	help = 'Cron job for fugr - updates feed cache and interest rankings.'
+	help = 'Updates all known feeds in parallel using multiple processes (configurable with FEED_FETCHER_POOL_SIZE). Eats a fair bit of CPU.'
 	def handle_noargs(self, *args, **kwargs):
 		# launches a pool of processes to do the actual fetching of each feed
 		fetchers = Pool(settings.FEED_FETCHER_POOL_SIZE)

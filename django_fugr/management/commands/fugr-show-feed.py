@@ -7,8 +7,8 @@ from django_fugr.models import Feed
 import settings
 
 class Command(BaseCommand):
-    args = '<searchterm username>'
-    help = 'Searches the feeds for a certain string'
+    args = '<searchterm [username]>'
+    help = 'Finds feeds with title or URL matching the search term, and show entries, optionally including user data on those entries.'
 
     def handle(self, *args, **options):
 	if len(args) >= 1 and len(args) <= 2:
@@ -25,5 +25,5 @@ class Command(BaseCommand):
 					marked = e.entry_for_user(user)
 					print "\t", marked.read and "read" or "", marked.star and "star" or "", marked.like and "like" or ""
 	else:
-		print "Supply one username and one search term."
+		print "Supply one search term and one username."
 

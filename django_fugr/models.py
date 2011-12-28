@@ -56,7 +56,7 @@ class FeedData(models.Model):
 				# if the bozo flag is set, turn the resulting exception into a string so we can encode it
 				if parsed.bozo:
 					# this object does not always serialize nicely
-					parsed.bozo_exception = str(parsed.bozo_exception)
+					parsed["bozo_exception"] = str(parsed.bozo_exception)
 				# store the pickle of the parsed feed we fetched in a b64 blob
 				# TODO: also store pickle.DEFAULT_PROTOCOL and other serializing format info
 				self.parsed = base64.encodestring(pickle.dumps(parsed))

@@ -166,7 +166,7 @@ $(function(){
 					// TODO: if there are multiple content parts show them all
 					// TODO: check if content parts are some other mimetype like mp3 or whatever
 					// strip HTML from summary -> http://robertnyman.com/roblab/javascript-remove-tags.htm
-					var entryheader = $("<h3 class='entry" + (entry.read == null ? "" : " read-entry") + "'><a href='#'>" + entry.title + "</a><div class='entry-summary'>" + (typeof(entry.summary) != "undefined" ? entry.summary : (typeof(entry.content) != "undefined" ? entry.content[0].value : "")).replace(/<\/?[^>]+(>|$)/g, "").substr(0, 100) + "...</div></h3><div class='feedcontent' entry_id='" + i + "'></div>");
+					var entryheader = $("<h3 class='entry" + (entry.read == null ? "" : " read-entry") + "'><a href='#'>" + entry.title + "</a><div class='entry-summary'>" + (feed_url.indexOf("/feeds") == 0 ? (typeof(entry.author) == "undefined" ? entry.feed_names[0] + " - " : entry.author + " - ") : "") + (typeof(entry.summary) != "undefined" ? entry.summary : (typeof(entry.content) != "undefined" ? entry.content[0].value : "")).replace(/<\/?[^>]+(>|$)/g, "").substr(0, 100) + "...</div></h3><div class='feedcontent' entry_id='" + i + "'></div>");
 					feedcontainer.append(entryheader);
 				}
 				$('div#tab-read').append(feedcontainer);

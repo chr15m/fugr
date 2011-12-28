@@ -17,6 +17,8 @@ from json_encode import json_encode
 from models import Feed, FeedTag, UserFeed, Entry, UserEntry
 from feeds import generate_internal_feed
 
+import settings
+
 @login_required
 def index(request):
 	""" Our one and only static page. Well, apart from the OPML form. """
@@ -130,12 +132,15 @@ def feed(request):
 	feed_url = request.GET.get("url", None)
 	if not feed_url:
 		raise Http404("Missing feed URL.")
+	feed = None
 	# TODO: cache a feed a short time in case the user hits it again soon
 	# is this a special internal constructed feed (e.g. aggregation or 'interesting')
 	if feed_url.startswith("/feeds"):
-		return generate_internal_feed(request, *feed_url.split("/")[2:])
+		feed = generate_internal_feed(request, *feed_url.split("/")[2:])
 	else:
-		# TODO: hmm, shouldn't bother un-encoding and re-encoding this json object like this - probably expensive
 		# this is just a regular feed we have cached previously from somewhere on the net
-		return get_object_or_404(UserFeed, user=request.user, feed__url=feed_url).feed.feeddata.get_cached_feed(request.user)
+		feed = get_object_or_404(UserFeed, user=request.user, feed__url=feed_url).feed.feeddata.get_cached_feed(request.user)
+	# get the user data for each entry and order by date, plus get the right pageful
+	feed["entries"] = [e.entry_for_user(request.user) for e in feed["entries"].order_by("-date")[:settings.FEED_ITEMS_PER_REQUEST]]
+	return feed
 

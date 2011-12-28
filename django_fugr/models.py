@@ -90,7 +90,7 @@ class FeedData(models.Model):
 			self.update_feed()
 		feed = pickle.loads(base64.decodestring(self.parsed))
 		# add the entries with the user data for this user
-		feed["entries"] = [e.entry_for_user(user) for e in self.feed.entry_set.all().order_by("-date")[:settings.FEED_ITEMS_PER_REQUEST]]
+		feed["entries"] = self.feed.entry_set.all()
 		return feed
 	
 	def __unicode__(self):
@@ -126,6 +126,7 @@ class Entry(models.Model):
 			user_data = self.userentry_set.get()
 		except UserEntry.DoesNotExist:
 			user_data = UserEntry()
+		entry_data["feed_names"] = [f.title for f in self.feeds.all()]
 		entry_data["like"] = user_data.like
 		entry_data["read"] = user_data.read
 		entry_data["star"] = user_data.star

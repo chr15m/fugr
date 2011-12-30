@@ -40,10 +40,11 @@ class FeedData(models.Model):
 		""" Refreshes the cached version of the parsed feed from the remote URL. """
 		url = self.feed.url
 		parsed = feedparser.parse(url, etag=self.etag, modified=self.last_modified)
+		log = ""
 		if hasattr(parsed, "status"):
 			if parsed.status == 304:
 				# nothing has changed since our last update
-				print url, "Feed not modified"
+				log += u'\t%s -> %s' % (url, "Feed not modified")
 			else:
 				# TODO: handle other statuses like redirect?
 				# store the etag and modified fields to not re-request unchanged feeds next time
@@ -60,7 +61,7 @@ class FeedData(models.Model):
 				# store the pickle of the parsed feed we fetched in a b64 blob
 				# TODO: also store pickle.DEFAULT_PROTOCOL and other serializing format info
 				self.parsed = base64.encodestring(pickle.dumps(parsed))
-				print url, "Stored", len(self.parsed), "bytes"
+				log += u'\t%s -> %s %d %s' % (url, "Stored", len(self.parsed), "bytes")
 				# get or create all entries in this feed from the database
 				for entry_data in getattr(parsed, "entries", []):
 					uid = getattr(entry_data, "guidislink", False) and getattr(entry_data, "link", None) or getattr(entry_data, "id", None)
@@ -78,9 +79,10 @@ class FeedData(models.Model):
 						pass
 						# malformed entry, not really sure what to do
 		else:
-			print url, "Feed did not return a valid status (might be 'not modified')"
+			log += u'\t%s -> %s' % (url, "Feed did not return a valid status (might be 'not modified')")
 		self.last_update = datetime.now()
 		self.save()
+		return log
 	
 	def get_cached_feed(self, user):
 		""" Unpickles and returns the cached version of the feedparser object. """

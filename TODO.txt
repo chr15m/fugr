@@ -1,4 +1,5 @@
  * Alter the client-cached entry datastructure after doing ajax request
+ * Make sure there is a date on fetched entries - set to today's date if not
  * Justify article text
  * font - Maven Pro
  * pagination - more items button at the bottom of the feed (if more are available)

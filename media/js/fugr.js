@@ -159,6 +159,7 @@ $(function(){
 				// TODO: paginate this properly
 				for(var i = 0; i < feed_json.entries.length; i++) {
 					var entry = feed_json.entries[i];
+					//console.log(entry);
 					// entry.link
 					// entry.title
 					// entry.updated

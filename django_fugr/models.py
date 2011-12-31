@@ -69,7 +69,7 @@ class FeedData(models.Model):
 						entry, created = Entry.objects.get_or_create(uid=entry_data.id)
 						# update all the relevant info for this entry from the feed
 						updated = entry_data.get("updated_parsed", None)
-						entry.date = updated and datetime(*updated[:6]) or None
+						entry.date = updated and datetime(*updated[:6]) or datetime.now()
 						entry.title = entry_data.get("title", "")
 						entry.parsed = base64.encodestring(pickle.dumps(entry_data))
 						if not self in entry.feeds.all():

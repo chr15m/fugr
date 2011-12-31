@@ -18,17 +18,19 @@ class Command(BaseCommand):
 	args = '<non-threaded>'
 	help = 'Updates all known feeds in parallel using multiple processes (configurable with FEED_FETCHER_POOL_SIZE). Eats a fair bit of CPU.'
 	def handle(self, *args, **options):
+		feeds = Feed.objects.all()
 		if len(args):
-			[do_update(f) for f in Feed.objects.all()]
+			[do_update(f) for f in feeds]
 		else:
 			# launches a pool of processes to do the actual fetching of each feed
 			fetchers = Pool(settings.FEED_FETCHER_POOL_SIZE)
 			try:
-				for exception in fetchers.map_async(do_update, Feed.objects.all()).get(0xFFFF):
+				for exception in fetchers.map_async(do_update, feeds).get(0xFFFF):
 					if exception:
 						raise exception[1], None, exception[2]
 			except KeyboardInterrupt:
 				print "Bail!"
 				fetchers.terminate()
 				exit()
+		print feeds.count(), "fetched"
 

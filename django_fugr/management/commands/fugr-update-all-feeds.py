@@ -8,9 +8,9 @@ from django_fugr.models import Feed
 import settings
 
 def do_update(f):
-	print u'Fetching "%s" <%s>' % (f.title, f.blog_url)
+	print unicode(u'Fetching "%s" <%s>' % (f.title, f.blog_url)).encode("utf-8")
 	try:
-		print f.feeddata.update_feed()
+		print unicode(f.feeddata.update_feed()).encode("utf-8")
 	except:
 		return exc_info()
 

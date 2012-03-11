@@ -237,16 +237,21 @@ $(function(){
 								"</div>"
 							);
 							// once the images load, make sure they fit the screen
-							content.find("img").load(function(ev) {
+							function imgresize(ev) {
 								if ($(this).width() > content.width()) {
 									// HACK - TODO: fix this to account for margins
 									// TODO: re-do this on resize event too
 									// NOTE: also ignore ads
 									var ratio = 1.0 * $(this).width() / $(this).height();
-									$(this).width(content.width() * .97);
-									$(this).height(content.width() * .97 / ratio);
+									$(this).width(content.width());
+									$(this).height(content.width() / ratio);
+									$(this).css({
+										"position": "absolute",
+										"left": "0"
+									});
 								}
-							});
+							}
+							content.find("img").load(imgresize).resize(imgresize);
 							dest.append(content);
 							// TODO: make this work - buttons along the bottom of the article too
 							// dest.append(bar.clone());

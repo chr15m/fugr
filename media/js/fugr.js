@@ -199,19 +199,20 @@ $(function(){
 					"autoHeight": false,
 					"clearStyle": true,
 					"active": false,
-					// when the user taps
+					// ### when the user taps an entry header ### //
 					"change": function(ev, ui) {
 						var dest = $(ui.newContent);
 						// get the entry data for this element
 						var entry = feed_json.entries[parseInt(dest.attr("entry_id"))];
 						if (entry) {
 							// create the entry flagging buttons (like, read, etc.) at the top
-							var buttons = $("<div class='feedbuttons'></div>");
+							var buttons = $("<div></div>");
 							for (t in update_types) {
 								function make_update_entry_function(which, entry_in, type, header_element) {
 									return function(){ update_entry(this, entry_in, type, header_element); }
 								}
-								var btnhtml = "<button class='ui-widget ui-button " + t + "-button' title='" + update_types[t][0] + "'><span class='ui-icon ui-icon-" + update_types[t][1] + "'></span></button>";
+								var btnhtml = "<button class='ui-widget ui-button " + t + "-button' title='" +
+									update_types[t][0] + "'><span class='ui-icon ui-icon-" + update_types[t][1] + "'></span></button>";
 								var btn = $(btnhtml).button().click(make_update_entry_function(this, entry, t, ui.newHeader));
 								if (entry[t] != null) {
 									btn.addClass("ui-state-highlight");
@@ -224,13 +225,23 @@ $(function(){
 							}
 							
 							// add the button bar to the entry
-							dest.html($("<div class='feedinfo'>" + entry.updated_parsed + "<br/></div>").prepend(buttons));
-							var content = $("<div class='feedcontent-inner'><div class='original-link'><a href='" + entry.link + "' target='_new'>original</a></div>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : (typeof(entry.summary) != "undefined" ? entry.summary : "")) + "</div>");
+							dest.html($("<div class='feedbuttons'></div>").prepend(buttons));
+							var content = $(
+								"<div class='feedcontent-inner'>" +
+								"<div class='top-line'>" +
+								"<span class='entry-author'>" + (entry["author"] ? entry.author + " - " : "") + "</span>" +
+								"<a href='" + entry.link + "' target='_new' class='entry-original-link'>original article</a>" +
+								"<span class='entry-date'>" + entry.updated_parsed.replace("T", " ") + "</span>" +
+								"</div>" +
+								(typeof(entry.content) != "undefined" ? entry.content[0].value : (typeof(entry.summary) != "undefined" ? entry.summary : "")) +
+								"</div>"
+							);
 							// once the images load, make sure they fit the screen
 							content.find("img").load(function(ev) {
 								if ($(this).width() > content.width()) {
 									// HACK - TODO: fix this to account for margins
 									// TODO: re-do this on resize event too
+									// NOTE: also ignore ads
 									var ratio = 1.0 * $(this).width() / $(this).height();
 									$(this).width(content.width() * .97);
 									$(this).height(content.width() * .97 / ratio);
@@ -241,6 +252,8 @@ $(function(){
 							// dest.append(bar.clone());
 							// scroll to the new entry we just tapped on
 							$('html, body').scrollTop(dest.prev().offset().top);
+						} else {
+							dest.append("Fugr error - entry not found.");
 						}
 					}
 				});

@@ -120,7 +120,7 @@ div.feedcontent img {
 	margin: .2em;
 }
 
-div.feedcontent div.feedinfo {
+div.feedcontent div.feedbuttons {
 	text-align: right;
 	font-size: 0.75em;
 	background-color: #f0f0f0;
@@ -130,16 +130,19 @@ div.feedcontent div.feedinfo {
 	padding: 20px;
 }
 
-div.feedcontent div.feedinfo div.feedbuttons {
+div.feedcontent div.feedbuttons div {
 	float: left;
-	margin-top: -0.25em;
+	margin-top: -0.9em;
 }
 
 div.feedcontent div.feedcontent-inner {
 	padding: .5em .5em !important;
 }
 
-div.original-link {
+div.feedcontent span.entry-date {
 	float: right;
-	padding: 20px;
+}
+
+div.feedcontent div.top-line {
+
 }

@@ -144,5 +144,6 @@ div.feedcontent span.entry-date {
 }
 
 div.feedcontent div.top-line {
-
+	padding: .5em;
+	background: #eee;
 }

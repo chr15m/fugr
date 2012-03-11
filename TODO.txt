@@ -1,35 +1,58 @@
- * Alter the client-cached entry datastructure after doing ajax request
- * Make sure there is a date on fetched entries - set to today's date if not
+ * BUG: in aggregated lists 'read'/'like'/'star' are not indicated
+
+ * top line of each article - author name - date - original article
+
+ * loop through all entry.content items and show differently depending upon their content-type
+
+ * pagination - more items button at the bottom of the feed (if more are available)
+ * After filling the screen jump to the top (or the last scroll position for that screen?)
+
+ * javascript snippet for subscribing to a page
+ * Add-feed-by-url interface working (if non-feed URL, shows feeds from that url to select from)
+
+ * Ability to change feed tags
+ * unread counts on feeds
+
+ * shrink images on orientation change / resize events too
+
+ * make all external links open in a new window (e.g. feed header).
+
+ * Make the refresh/reload button actually work
+
+ * Show header above spinner when loading feed
+
+ * get buttons in the bottom of the entry display as well as the top
+
+ * history management (browser back button should work)
+
+ * search button searches current heirarchy
+
+ * option in preferences to show/hide read items
+
+ * "mark all as read" button
+   * make a special state for this (not actually read)
+
+---
+
+ * refactor progress code to use cache instead of database (maybe?)
+
  * Justify article text
  * font - Maven Pro
- * pagination - more items button at the bottom of the feed (if more are available)
- * "mark all as read" button
  * show items older than 30 days as read
- * After filling the screen jump to the top (or the last scroll position for that screen?)
- * make external links open in a new window (e.g. feed header).
- * javascript snippet for subscribing to a page
- * Show header above spinner when loading feed
- * Make the refresh button actually work
- * get buttons in the bottom of the entry display as well as the top
- * If images are larger than width of page, shrink them with jQuery
- * refactor progress code to use cache instead of database (maybe?)
- * Ability to change feed tags
- * fix the mini spinner (gif transparency sucks)
- * Fix json encoding of struct_time
- * unread counts on feeds
- * Add-feed-by-url interface working (if non-feed URL, shows feeds from that url to select from)
+
  * About button on home page
  * Feedback tab
+
  * Logo in the top right - hovering shows the about bar
    * About link in the about bar (dialog popup)
    * Source code link in the about bar
    * Feature request link in the about bar
+
  * client-side cache using HTML5 local storage
    * always hit the cache first if available
    * show a spinner still
    * wait for the data to come back from the server (if ever)
  * remember last view in cookie/session/user (user? works across devices)
- * put permalink to actual article
 
  * Donate button somewhere.
  * Ads?
@@ -42,22 +65,23 @@
    * drop-down: show all/show new - sort by newest/oldest/magic - search - mark all as read
    * Every tag/feed has a total unread count next to it
    * Clicking a tag instantly shows you its feeds
-     * top entry is the feed itself with the aggregated view
-     * back button at top left says 'back'
+     + top entry is the feed itself with the aggregated view
+     + back button at top left says 'back'
      * entries indented slightly (except top one)
-   + tags have a folder icon next to them
-   + feeds have an rss icon next to them
-   + when you click a feed - loading spinner (so that's ok)
    * feed view features:
-     + back button at the top says 'feeds'
-     + top: collapse/expand (expand loads basically instantly - but not images - keep HTML but do not insert it yet)
      * top: next item button
-     * top: star
      * bottom: star
      * bottom: share/email/share with note
      * bottom: keep unread
      * bottom: edit tags
      * bottom: mark interesting
+     + top: star
+     + back button at the top says 'feeds'
+     + top: collapse/expand
+       (expand loads basically instantly - but not images - keep HTML but do not insert it yet)
+   + tags have a folder icon next to them
+   + feeds have an rss icon next to them
+   + when you click a feed - loading spinner (so that's ok)
 
  * Friend searching by email/username/name
  * Commenting
@@ -82,4 +106,10 @@ Done
  + Progress bar for OPML upload
  + marking something read should mark the whole entry read (and update display)
  + Display read feeds as such
+ + Alter the client-cached entry datastructure after doing ajax request
+ + Make sure there is a date on fetched entries - set to today's date if not
+ + Fix json encoding of struct_time
+ + fix the mini spinner (gif transparency sucks)
+ + If images are larger than width of page, shrink them with jQuery
+ + put permalink to actual article
 

@@ -1,8 +1,17 @@
 $(function(){
-	// on mobile devices do this:
+	/***** style *****/
+	
+	// on mobile devices make the font size a bit more readable
 	if ((/android|ipad|iphone/gi).test(navigator.appVersion)) {
 		$("body").css({"font-size": ".9em"});
 	}
+		
+	// jquery-ui styles
+	$('.tabs').tabs();
+	$('button,input[type=submit]').button();
+	$('input').addClass('ui-widget');
+
+	/***** global/utility stuff *****/
 	
 	// global object holding all data about the current user's session
 	var session = {
@@ -12,35 +21,12 @@ $(function(){
 		"username": username,
 	};
 	
-	// this header will hang out at the top of the read area
-	function set_header(title, backfunc) {
-		var headerhtml = $("<div class='read-header ui-state-default'></div>");
-		// if there is a backfunc callback
-		if (backfunc) {
-			headerhtml.append($("<button id='read-back' class='ui-widget ui-button headerbutton'><span class='ui-icon ui-icon-circle-arrow-w'></span></button>").click(function(e) {
-				backfunc();
-			}));
-		}
-		// refresh button
-		headerhtml.append("<button id='read-refresh' class='ui-widget ui-button headerbutton'><span class='ui-icon ui-icon-arrowrefresh-1-e'></span></button>");
-		// add the title they requested
-		if (typeof(title) != "undefined") {
-			headerhtml.append("<span class='title'>" + title + "</span>");
-		}
-		$('div#tab-read').html(headerhtml);
-		// turn those things into jquery ui buttons
-		$('button.headerbutton').button();
-	}
-	
 	// puts the loading spinner in the header area
 	function show_spinner() {
 		$("div#tab-read").html("<img src='/media/img/loader.gif' id='loader'/>");
 	}
-	
-	// jquery-ui styles
-	$('.tabs').tabs();
-	$('button,input[type=submit]').button();
-	$('input').addClass('ui-widget');
+
+	/***** OPML upload *****/
 	
 	// continually hit the opml-progress URL to see how far through the upload/parse we are
 	function check_opml_progress(dialog, progress, progress_message) {
@@ -86,6 +72,8 @@ $(function(){
 		// trigger a click so that the user can choose a file
 		$("#opml-upload-frame").contents().find("input#opml-upload").trigger("click");
 	});
+	
+	/***** interactively flagging entries *****/
 	
 	// different types of update we can register with the server
 	update_types = {
@@ -143,10 +131,33 @@ $(function(){
 		//inner.addClass("ui-state-active");
 	}
 	
+	/***** browsing and reading feeds *****/
+	
+	// this header will hang out at the top of the read area
+	function set_header(title, backfunc) {
+		var headerhtml = $("<div class='read-header ui-state-default'></div>");
+		// if there is a backfunc callback
+		if (backfunc) {
+			headerhtml.append($("<button id='read-back' class='ui-widget ui-button headerbutton'><span class='ui-icon ui-icon-circle-arrow-w'></span></button>").click(function(e) {
+				backfunc();
+			}));
+		}
+		// refresh button
+		headerhtml.append("<button id='read-refresh' class='ui-widget ui-button headerbutton'><span class='ui-icon ui-icon-arrowrefresh-1-e'></span></button>");
+		// add the title they requested
+		if (typeof(title) != "undefined") {
+			headerhtml.append("<span class='title'>" + title + "</span>");
+		}
+		$('div#tab-read').html(headerhtml);
+		// turn those things into jquery ui buttons
+		$('button.headerbutton').button();
+	}
+	
 	// loads a particular feed into the read area
 	function populate_read_tab_with_feed(feed_url, backfunc) {
 		// show spinner while we load
 		show_spinner();
+		// first fetch the feed we want
 		$.get("/fugr/json/feed?url=" + encodeURIComponent(feed_url),
 			function(feed_json) {
 				if (feed_json == null) {
@@ -156,7 +167,7 @@ $(function(){
 				session.current_feed = feed_json;
 				set_header("<a href='" + feed_json.feed.link + "'>" + feed_json.feed.title + "</a>", backfunc);
 				var feedcontainer = $("<div></div>");
-				// TODO: paginate this properly
+				// add all entries we fetch from the server to the reading area (collapsed)
 				for(var i = 0; i < feed_json.entries.length; i++) {
 					var entry = feed_json.entries[i];
 					//console.log(entry);
@@ -170,17 +181,22 @@ $(function(){
 					var entryheader = $("<h3 class='entry" + (entry.read == null ? "" : " read-entry") + "'><a href='#'>" + entry.title + "</a><div class='entry-summary'>" + (feed_url.indexOf("/feeds") == 0 ? (typeof(entry.author) == "undefined" ? entry.feed_names[0] + " - " : entry.author + " - ") : "") + (typeof(entry.summary) != "undefined" ? entry.summary : (typeof(entry.content) != "undefined" ? entry.content[0].value : "")).replace(/<\/?[^>]+(>|$)/g, "").substr(0, 100) + "...</div></h3><div class='feedcontent' entry_id='" + i + "'></div>");
 					feedcontainer.append(entryheader);
 				}
+				// add a 'more' button here
+				// now add all the HTML we just generated to the container we created for viewing
 				$('div#tab-read').append(feedcontainer);
+				// make the collapsed entries accordion out with their content when the user taps them
 				feedcontainer.accordion({
 					"collapsible": true,
 					"autoHeight": false,
 					"clearStyle": true,
 					"active": false,
+					// when the user taps
 					"change": function(ev, ui) {
 						var dest = $(ui.newContent);
 						// get the entry data for this element
 						var entry = feed_json.entries[parseInt(dest.attr("entry_id"))];
 						if (entry) {
+							// create the entry flagging buttons (like, read, etc.) at the top
 							var buttons = $("<div class='feedbuttons'></div>");
 							for (t in update_types) {
 								function make_update_entry_function(which, entry_in, type, header_element) {
@@ -198,14 +214,14 @@ $(function(){
 								buttons.append(btn);
 							}
 							
-							// add the button bar
+							// add the button bar to the entry
 							dest.html($("<div class='feedinfo'>" + entry.updated_parsed + "<br/></div>").prepend(buttons));
 							var content = $("<div class='feedcontent-inner'><div class='original-link'><a href='" + entry.link + "' target='_new'>original</a></div>" + (typeof(entry.content) != "undefined" ? entry.content[0].value : (typeof(entry.summary) != "undefined" ? entry.summary : "")) + "</div>");
 							// once the images load, make sure they fit the screen
 							content.find("img").load(function(ev) {
 								if ($(this).width() > content.width()) {
 									// HACK - TODO: fix this to account for margins
-									// TODO: re-do this on resize event
+									// TODO: re-do this on resize event too
 									var ratio = 1.0 * $(this).width() / $(this).height();
 									$(this).width(content.width() * .97);
 									$(this).height(content.width() * .97 / ratio);
@@ -214,7 +230,7 @@ $(function(){
 							dest.append(content);
 							// TODO: make this work - buttons along the bottom of the article too
 							// dest.append(bar.clone());
-							// scroll to the new entry
+							// scroll to the new entry we just tapped on
 							$('html, body').scrollTop(dest.prev().offset().top);
 						}
 					}
@@ -294,6 +310,8 @@ $(function(){
 		// push this feed onto the tag it belongs to
 		session.tags[tagname].push(data[feed_url]);
 	}
+	
+	/***** liftoff *****/
 	
 	// load up our list of tags into the main pane
 	$.get("/fugr/json/feeds", function(data) {

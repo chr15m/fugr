@@ -21,7 +21,7 @@ import settings
 
 @login_required
 def index(request):
-	""" Our one and only static page. Well, apart from the OPML form. """
+	""" Our one and only static page. """
 	return direct_to_template(request, "index.html", {"username": json_encode(request.user)})
 
 ############### JSON API CALLS ###############

@@ -1,7 +1,5 @@
  * BUG: in aggregated lists 'read'/'like'/'star' are not indicated
 
- * top line of each article - author name - date - original article
-
  * loop through all entry.content items and show differently depending upon their content-type
 
  * pagination - more items button at the bottom of the feed (if more are available)
@@ -112,4 +110,5 @@ Done
  + fix the mini spinner (gif transparency sucks)
  + If images are larger than width of page, shrink them with jQuery
  + put permalink to actual article
+ + top line of each article - author name - date - original article
 

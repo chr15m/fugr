@@ -227,12 +227,12 @@ $(function(){
 							// add the button bar to the entry
 							dest.html($("<div class='feedbuttons'></div>").prepend(buttons));
 							var content = $(
-								"<div class='feedcontent-inner'>" +
 								"<div class='top-line'>" +
 								"<span class='entry-author'>" + (entry["author"] ? entry.author + " - " : "") + "</span>" +
 								"<a href='" + entry.link + "' target='_new' class='entry-original-link'>original article</a>" +
 								"<span class='entry-date'>" + entry.updated_parsed.replace("T", " ") + "</span>" +
 								"</div>" +
+								"<div class='feedcontent-inner'>" +
 								(typeof(entry.content) != "undefined" ? entry.content[0].value : (typeof(entry.summary) != "undefined" ? entry.summary : "")) +
 								"</div>"
 							);

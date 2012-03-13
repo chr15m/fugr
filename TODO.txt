@@ -1,27 +1,39 @@
- * BUG: in aggregated lists 'read'/'like'/'star' are not indicated
+ * "more items" button at the bottom of the feed (if more are available)
+
+ * Add-feed-by-url interface working (if non-feed URL, shows feeds from that url to select from)
+
+ * images
+   * shrink images on orientation change / resize events too
+   * fit images against left hand side
+   * make image 100% of width
+
+ * Ability to change feed tags
+ * ability to unsubscribe feeds
+
+ * get buttons in the bottom of the entry display as well as the top
+
+ * Show feed header above spinner when loading feed
+
+ * replace icons with a symbols font
+   http://www.justbenicestudio.com/studio/websymbols/
 
  * loop through all entry.content items and show differently depending upon their content-type
+   * find and test some youtube ones
+   * podcast one like econtalk
+   * do side by side comparisons with google reader
 
- * pagination - more items button at the bottom of the feed (if more are available)
  * After filling the screen jump to the top (or the last scroll position for that screen?)
 
  * javascript snippet for subscribing to a page
- * Add-feed-by-url interface working (if non-feed URL, shows feeds from that url to select from)
 
- * Ability to change feed tags
  * unread counts on feeds
-
- * shrink images on orientation change / resize events too
 
  * make all external links open in a new window (e.g. feed header).
 
  * Make the refresh/reload button actually work
 
- * Show header above spinner when loading feed
-
- * get buttons in the bottom of the entry display as well as the top
-
  * history management (browser back button should work)
+   * reloading page should basically take you to the same look
 
  * search button searches current heirarchy
 
@@ -30,9 +42,13 @@
  * "mark all as read" button
    * make a special state for this (not actually read)
 
+ * BUG: in aggregated lists 'read'/'like'/'star' are not indicated
+
+ * on wide screens show the feed list on the left hand side optionally
+
 ---
 
- * refactor progress code to use cache instead of database (maybe?)
+ *  refactor progress code to use cache instead of database (maybe?)
 
  * Justify article text
  * font - Maven Pro

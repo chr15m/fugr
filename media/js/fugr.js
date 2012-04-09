@@ -1,10 +1,5 @@
 $(function(){
 	/***** style *****/
-	
-	// on mobile devices make the font size a bit more readable
-	if ((/android|ipad|iphone/gi).test(navigator.appVersion)) {
-		$("body").css({"font-size": ".9em"});
-	}
 		
 	// jquery-ui styles
 	$('.tabs').tabs();

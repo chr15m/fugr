@@ -1,11 +1,11 @@
 $(function(){
 	/***** style *****/
-		
+	
 	// jquery-ui styles
 	$('.tabs').tabs();
 	$('button,input[type=submit]').button();
 	$('input').addClass('ui-widget');
-
+	
 	/***** global/utility stuff *****/
 	
 	// global object holding all data about the current user's session
@@ -20,7 +20,7 @@ $(function(){
 	function show_spinner() {
 		$("div#tab-read").html("<img src='/media/img/loader.gif' id='loader'/>");
 	}
-
+	
 	/***** OPML upload *****/
 	
 	// continually hit the opml-progress URL to see how far through the upload/parse we are
@@ -123,7 +123,6 @@ $(function(){
 				inner.css({"background-image": ""});
 			}
 		}, "json");
-		//inner.addClass("ui-state-active");
 	}
 	
 	/***** browsing and reading feeds *****/
@@ -147,6 +146,8 @@ $(function(){
 		// turn those things into jquery ui buttons
 		$('button.headerbutton').button();
 	}
+	
+	
 	
 	// loads a particular feed into the read area
 	function populate_read_tab_with_feed(feed_url, backfunc) {
@@ -280,8 +281,8 @@ $(function(){
 		}
 		// add the link to summary feeds
 		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>" + tagname + " - All</div>").click(make_load_func("/feeds/" + session.username + "/all/" + tagname)));
-		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>" + tagname + " - Interesting</div>").click(make_load_func("/feeds/" + session.username + "/interesting/" + tagname)));
-		$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>" + tagname + " - Popular</div>").click(make_load_func("/feeds/" + session.username + "/popular/" + tagname)));
+		//$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>" + tagname + " - Interesting</div>").click(make_load_func("/feeds/" + session.username + "/interesting/" + tagname)));
+		//$("div#tab-read").append($("<div class='feed-link feedlist' id='feed-link-all'>" + tagname + " - Popular</div>").click(make_load_func("/feeds/" + session.username + "/popular/" + tagname)));
 		var tagfeeds = session.tags[tagname];
 		// now put the feeds in there
 		if (typeof tagfeeds != "undefined") {

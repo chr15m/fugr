@@ -123,16 +123,17 @@ class Entry(models.Model):
 	
 	def entry_for_user(self, user):
 		""" Get the entry with the entry data applied by the user. """
-		entry_data = pickle.loads(base64.decodestring(self.parsed))
-		try:
-			user_data = self.userentry_set.get()
-		except UserEntry.DoesNotExist:
-			user_data = UserEntry()
-		entry_data["feed_names"] = [f.title for f in self.feeds.all()]
-		entry_data["like"] = user_data.like
-		entry_data["read"] = user_data.read
-		entry_data["star"] = user_data.star
-		return entry_data
+		if self.parsed:
+			entry_data = pickle.loads(base64.decodestring(self.parsed))
+			try:
+				user_data = self.userentry_set.get()
+			except UserEntry.DoesNotExist:
+				user_data = UserEntry()
+			entry_data["feed_names"] = [f.title for f in self.feeds.all()]
+			entry_data["like"] = user_data.like
+			entry_data["read"] = user_data.read
+			entry_data["star"] = user_data.star
+			return entry_data
 	
 	def __unicode__(self):
 		return self.date.strftime("%Y-%m-%d %H:%M") + " " + self.title

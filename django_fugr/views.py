@@ -130,6 +130,7 @@ def feeds(request):
 def feed(request):
 	""" Returns the contents of a feed. """
 	feed_url = request.GET.get("url", None)
+	page = int(request.GET.get("page", 0)) * settings.FEED_ITEMS_PER_REQUEST
 	if not feed_url:
 		raise Http404("Missing feed URL.")
 	feed = None
@@ -141,6 +142,6 @@ def feed(request):
 		# this is just a regular feed we have cached previously from somewhere on the net
 		feed = get_object_or_404(UserFeed, user=request.user, feed__url=feed_url).feed.feeddata.get_cached_feed(request.user)
 	# get the user data for each entry and order by date, plus get the right pageful
-	feed["entries"] = [e.entry_for_user(request.user) for e in feed["entries"].order_by("-date")[:settings.FEED_ITEMS_PER_REQUEST]]
+	feed["entries"] = [e.entry_for_user(request.user) for e in feed["entries"].order_by("-date")[page:page + settings.FEED_ITEMS_PER_REQUEST] if e.parsed]
 	return feed
 

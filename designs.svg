@@ -14,7 +14,7 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.2 r9819"
+   inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="designs.svg">
   <defs
      id="defs4">
@@ -56,10 +56,10 @@
      inkscape:showpageshadow="false"
      borderlayer="true"
      showborder="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="984"
+     inkscape:window-width="1366"
+     inkscape:window-height="706"
      inkscape:window-x="0"
-     inkscape:window-y="16"
+     inkscape:window-y="14"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -69,7 +69,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -606,7 +606,10 @@
     <g
        style="fill:#1a1a1a"
        transform="translate(135.97139,637.38801)"
-       id="g3874">
+       id="g3874"
+       inkscape:export-filename="/home/chrism/dev/fugr/logo.png"
+       inkscape:export-xdpi="93.339996"
+       inkscape:export-ydpi="93.339996">
       <text
          xml:space="preserve"
          style="font-size:179.99798584px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#1a1a1a;fill-opacity:1;stroke:none;font-family:Maven Pro;-inkscape-font-specification:Maven Pro"

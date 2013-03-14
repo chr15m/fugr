@@ -1,2 +1,6 @@
 *.pyc
 .*.swp
+dev.sq3
+cache/*
+settings_local.py
+django
